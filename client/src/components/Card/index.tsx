@@ -39,8 +39,10 @@ export const Card: React.FC<Props> = ({
         ))}
     </Attributes>
 
-    <PowerToughness>
-      {basePower && baseToughness && `${basePower} / ${baseToughness}`}
-    </PowerToughness>
+    {basePower && baseToughness && (
+      <PowerToughness>
+        {basePower} / {baseToughness}
+      </PowerToughness>
+    )}
   </Wrap>
 )
