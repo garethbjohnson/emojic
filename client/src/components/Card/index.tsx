@@ -18,12 +18,14 @@ import {
 
 interface Props {
   card: GameCard
+  onClick?: () => void
 }
 
 export const Card: React.FC<Props> = ({
   card: { name, manaCost, type, attributes, basePower, baseToughness },
+  onClick,
 }) => (
-  <Wrap>
+  <Wrap onClick={onClick}>
     {manaCost && <ManaCost>{getManaAmountDisplay(manaCost)}</ManaCost>}
 
     <Image>{name}</Image>

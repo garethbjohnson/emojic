@@ -12,7 +12,7 @@ export const Attributes = styled.ul`
   padding: 4px;
 `
 
-export const Image = styled.h2`
+export const Image = styled.h3`
   align-items: center;
   display: flex;
   font-size: 4rem;
@@ -55,6 +55,7 @@ export const Wrap = styled.div`
   height: 320px;
   padding: 12px;
   position: relative;
+  user-select: none;
   width: 240px;
 
   > * + * {

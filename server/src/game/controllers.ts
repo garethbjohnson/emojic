@@ -45,3 +45,32 @@ export const createGame = (_: Request, response: Response): void => {
 
   response.status(201).send(playerGame)
 }
+
+export const playCard = (
+  gameId: string,
+  playerId: string,
+  cardId: string
+): Game => {
+  const game = games[gameId]
+  if (!game) throw new Error('Game not found')
+
+  const playerArea = game.playerAreas.find(area => area.playerId === playerId)
+  if (!playerArea) throw new Error('Player not found in game')
+
+  const card = playerArea.hand.find(card => card.id === cardId)
+  if (!card) throw new Error('Card not found')
+
+  games[gameId] = {
+    ...game,
+    playerAreas: [
+      ...game.playerAreas.filter(area => area.playerId !== playerId),
+      {
+        ...playerArea,
+        battlefield: [...playerArea.battlefield, card],
+        hand: playerArea.hand.filter(card => card.id !== cardId),
+      },
+    ],
+  }
+
+  return getPlayerGame(games[gameId], playerId)
+}

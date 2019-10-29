@@ -15,7 +15,7 @@ export const reducer: Reducer<State, EmojicAction> = (
   action: EmojicAction
 ): State => {
   switch (action.type) {
-    case ActionType.CREATE_GAME:
+    case ActionType.UPDATE_GAME:
       return {
         ...state,
         game: action.payload,
