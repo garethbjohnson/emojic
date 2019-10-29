@@ -10,22 +10,46 @@ import {
 export const getHiddenCards = (cards: GameCard[]): GameCard[] =>
   cards.map(_ => hiddenCard)
 
-export const getManaIsEnough = (cost: ManaAmount, pool: ManaAmount): boolean =>
-  ['colorless', 'black', 'blue', 'green', 'red', 'white'].every(
-    (color: keyof ManaAmount) =>
-      !cost[color] || (pool[color] && cost[color] <= pool[color])
-  )
+export const getManaIsEnough = (
+  cost: ManaAmount,
+  pool: ManaAmount
+): boolean => {
+  try {
+    getManaMinusCost(pool, cost)
+  } catch {
+    return false
+  }
+
+  return true
+}
 
 export const getManaMinusCost = (
   pool: ManaAmount,
   cost: ManaAmount
 ): ManaAmount => {
   const newPool = { ...pool }
-  ;['colorless', 'black', 'blue', 'green', 'red', 'white'].forEach(
-    (color: keyof ManaAmount) => {
-      if (cost[color] && pool[color]) newPool[color] -= cost[color]
+  const costLeft = { ...cost }
+
+  const colors = ['black', 'blue', 'green', 'red', 'white']
+  const colorsWithColorless = [...colors, 'colorless']
+
+  colors.forEach((color: keyof ManaAmount) => {
+    if (cost[color]) {
+      newPool[color] = (newPool[color] || 0) - cost[color]
+      if (newPool[color] < 0) throw new Error('Not enough mana')
+      costLeft[color] = 0
     }
-  )
+  })
+
+  for (const color of colorsWithColorless) {
+    while (newPool[color as keyof ManaAmount] > 0 && costLeft.colorless > 0) {
+      newPool[color as keyof ManaAmount] =
+        (newPool[color as keyof ManaAmount] || 0) - 1
+      costLeft.colorless = (costLeft.colorless || 0) - 1
+    }
+  }
+
+  if (costLeft.colorless > 0) throw new Error('Not enough mana')
 
   return newPool
 }
@@ -74,7 +98,7 @@ export const getShuffled = <T = GameCard>(items: T[]): T[] => {
   return newItems
 }
 
-export const getSortedHand = (hand: GameCard[]): GameCard[] => {
+export const getSortedCards = (hand: GameCard[]): GameCard[] => {
   const newHand = hand.slice()
 
   newHand.sort((card1: GameCard, card2: GameCard) => {

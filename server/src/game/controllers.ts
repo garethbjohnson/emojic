@@ -3,7 +3,6 @@ import { Request, Response } from 'express'
 import {
   AttributeActivatedAbility,
   Game,
-  GameCard,
   Phase,
   PlayerArea,
   blackDeck,
@@ -15,7 +14,7 @@ import {
   getManaPlusAddition,
   getPlayerGame,
   getShuffled,
-  getSortedHand,
+  getSortedCards,
   makeGameCard,
   makeId,
 } from './helpers'
@@ -72,6 +71,38 @@ export const activateAbility = (
   return games[gameId]
 }
 
+export const continueTurn = (gameId: string, playerId: string): Game => {
+  // TODO: do actual turn handling.
+
+  const { game, playerArea } = validateMoveBasics(gameId, playerId)
+
+  if (game.turn.playerId !== playerId) throw new Error('Not your turn')
+
+  games[gameId] = {
+    ...game,
+    playerAreas: [
+      ...game.playerAreas.filter(area => area.playerId !== playerId),
+      {
+        ...playerArea,
+        battlefield: playerArea.battlefield.map(card => ({
+          ...card,
+          isTapped: false,
+          hasSummoningSickness: false,
+        })),
+        hand: getSortedCards([...playerArea.hand, playerArea.library[0]]),
+        library: playerArea.library.slice(1),
+        manaPool: {},
+      },
+    ],
+    turn: {
+      ...game.turn,
+      manaWasPlayed: false,
+    },
+  }
+
+  return games[gameId]
+}
+
 export const createGame = (_: Request, response: Response): void => {
   // TODO: take the player's ID.
   // TODO: authenticate the player.
@@ -98,7 +129,7 @@ export const createGame = (_: Request, response: Response): void => {
         battlefield: [],
         exile: [],
         graveyard: [],
-        hand: getSortedHand(unsortedHand),
+        hand: getSortedCards(unsortedHand),
         library,
         manaPool: {},
       },
@@ -140,7 +171,7 @@ export const playCard = (
       ...game.playerAreas.filter(area => area.playerId !== playerId),
       {
         ...playerArea,
-        battlefield: [...playerArea.battlefield, card],
+        battlefield: getSortedCards([...playerArea.battlefield, card]),
         hand: playerArea.hand.filter(card => card.id !== cardId),
         manaPool: card.manaCost
           ? getManaMinusCost(playerArea.manaPool, card.manaCost)

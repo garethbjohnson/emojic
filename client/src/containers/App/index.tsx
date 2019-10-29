@@ -6,6 +6,7 @@ import {
   MovePlayCard,
   MoveType,
   Response,
+  MoveContinueTurn,
 } from 'emojic-shared'
 
 import { Card } from '../../components/Card'
@@ -25,6 +26,16 @@ const activateAbility = (
     playerId,
     type: MoveType.ACTIVATE_ABILITY,
     data: { attributeIndex, cardId },
+  }
+
+  const message = JSON.stringify(move)
+  webSocket.send(message)
+}
+
+const continueTurn = (playerId: string) => {
+  const move: MoveContinueTurn = {
+    playerId,
+    type: MoveType.CONTINUE_TURN,
   }
 
   const message = JSON.stringify(move)
@@ -102,7 +113,7 @@ export const App: React.FC = () => {
           <h2>
             Mana pool: {getManaAmountDisplay(playerArea!.manaPool) || 'No mana'}
           </h2>
-          <Hand>
+          <Hand cardCount={playerArea!.hand.length}>
             {playerArea!.hand.map(card => (
               <Card
                 card={card}
@@ -111,6 +122,9 @@ export const App: React.FC = () => {
               />
             ))}
           </Hand>
+          <button onClick={() => continueTurn(playerArea!.playerId)}>
+            Next turn
+          </button>
         </>
       )}
     </Wrap>

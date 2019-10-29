@@ -1,5 +1,8 @@
 import styled, { css } from 'styled-components'
 
+const cardHeight = '320px'
+const cardWidth = '240px'
+
 export const Attribute = styled.li<{ onClick?: Function }>`
   ${props =>
     props.onClick &&
@@ -34,6 +37,26 @@ export const Image = styled.h3`
   margin: 0;
 `
 
+export const Main = styled.div<{ isTapped?: boolean }>`
+  background-color: white;
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 320px;
+  margin: auto;
+  padding: 12px;
+  position: relative;
+  ${props => props.isTapped && 'transform: rotateZ(90deg);'}
+  transition: transform 0.5s;
+  user-select: none;
+  width: 240px;
+
+  > * + * {
+    margin-top: 4px;
+  }
+`
+
 export const ManaCost = styled.div`
   padding: 4px;
   position: absolute;
@@ -59,20 +82,7 @@ export const Type = styled.div`
 `
 
 export const Wrap = styled.div<{ isTapped?: boolean }>`
-  background-color: white;
-  border-radius: 8px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  height: 320px;
-  padding: 12px;
   position: relative;
-  ${props => props.isTapped && 'transform: rotateZ(90deg);'}
-  transition: transform 0.5s;
-  user-select: none;
-  width: 240px;
-
-  > * + * {
-    margin-top: 4px;
-  }
+  width: ${props => (props.isTapped ? cardHeight : cardWidth)};
+  transition: width 0.2s;
 `

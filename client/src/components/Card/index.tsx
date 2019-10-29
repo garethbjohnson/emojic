@@ -11,6 +11,7 @@ import {
   Attribute,
   Attributes,
   Image,
+  Main,
   ManaCost,
   PowerToughness,
   Type,
@@ -36,33 +37,35 @@ export const Card: React.FC<Props> = ({
   },
   onClick,
 }) => (
-  <Wrap isTapped={isTapped} onClick={onClick}>
-    {manaCost && <ManaCost>{getManaAmountDisplay(manaCost)}</ManaCost>}
+  <Wrap isTapped={isTapped}>
+    <Main isTapped={isTapped} onClick={onClick}>
+      {manaCost && <ManaCost>{getManaAmountDisplay(manaCost)}</ManaCost>}
 
-    <Image>{name}</Image>
+      <Image>{name}</Image>
 
-    <Type>{getCardTypeDisplay(type)}</Type>
+      <Type>{getCardTypeDisplay(type)}</Type>
 
-    <Attributes>
-      {attributes &&
-        attributes.map((attribute, index) => (
-          <Attribute
-            key={index}
-            onClick={
-              activateAbility && attribute.type === 'ActivatedAbility'
-                ? () => activateAbility(index)
-                : undefined
-            }
-          >
-            {getCardAttributeDisplay(attribute)}
-          </Attribute>
-        ))}
-    </Attributes>
+      <Attributes>
+        {attributes &&
+          attributes.map((attribute, index) => (
+            <Attribute
+              key={index}
+              onClick={
+                activateAbility && attribute.type === 'ActivatedAbility'
+                  ? () => activateAbility(index)
+                  : undefined
+              }
+            >
+              {getCardAttributeDisplay(attribute)}
+            </Attribute>
+          ))}
+      </Attributes>
 
-    {basePower && baseToughness && (
-      <PowerToughness>
-        {basePower} / {baseToughness}
-      </PowerToughness>
-    )}
+      {basePower && baseToughness && (
+        <PowerToughness>
+          {basePower} / {baseToughness}
+        </PowerToughness>
+      )}
+    </Main>
   </Wrap>
 )

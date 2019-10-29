@@ -6,7 +6,12 @@ import WebSocket from 'ws'
 
 import { Game, Move, MoveType, Response } from 'emojic-shared'
 
-import { activateAbility, createGame, playCard } from './game/controllers'
+import {
+  activateAbility,
+  continueTurn,
+  createGame,
+  playCard,
+} from './game/controllers'
 
 dotenv.config()
 
@@ -46,6 +51,18 @@ app.ws('/api/games/:gameId', (webSocket: WebSocket, request: Request) => {
             move.data.cardId,
             move.data.attributeIndex
           )
+          response = { status: 'SUCCESS', game: playerGame }
+        } catch (error) {
+          response = { status: 'FAILURE', message: error.message }
+        }
+
+        responseMessage = JSON.stringify(response)
+        webSocket.send(responseMessage)
+        return
+
+      case MoveType.CONTINUE_TURN:
+        try {
+          playerGame = continueTurn(request.params.gameId, move.playerId)
           response = { status: 'SUCCESS', game: playerGame }
         } catch (error) {
           response = { status: 'FAILURE', message: error.message }
