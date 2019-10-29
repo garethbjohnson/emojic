@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ],
+  "scripts": {
+    "start-server": "cd shared && yarn build && cd ../server && yarn start"
+  }
+}

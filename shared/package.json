@@ -1,0 +1,16 @@
+{
+  "name": "emojic-shared",
+  "version": "0.0.1",
+  "description": "Emoji card game shared files",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "cross-env": "5.0.5"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^3.6.4"
+  }
+}
