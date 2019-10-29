@@ -2,12 +2,47 @@ import {
   Card,
   Game,
   GameCard,
-  getConvertedManaCost,
+  ManaAmount,
   PlayerArea,
+  getConvertedManaCost,
 } from 'emojic-shared'
 
 export const getHiddenCards = (cards: GameCard[]): GameCard[] =>
   cards.map(_ => hiddenCard)
+
+export const getManaIsEnough = (cost: ManaAmount, pool: ManaAmount): boolean =>
+  ['colorless', 'black', 'blue', 'green', 'red', 'white'].every(
+    (color: keyof ManaAmount) =>
+      !cost[color] || (pool[color] && cost[color] <= pool[color])
+  )
+
+export const getManaMinusCost = (
+  pool: ManaAmount,
+  cost: ManaAmount
+): ManaAmount => {
+  const newPool = { ...pool }
+  ;['colorless', 'black', 'blue', 'green', 'red', 'white'].forEach(
+    (color: keyof ManaAmount) => {
+      if (cost[color] && pool[color]) newPool[color] -= cost[color]
+    }
+  )
+
+  return newPool
+}
+
+export const getManaPlusAddition = (
+  pool: ManaAmount,
+  addition: ManaAmount
+): ManaAmount => {
+  const newPool = { ...pool }
+  ;['colorless', 'black', 'blue', 'green', 'red', 'white'].forEach(
+    (color: keyof ManaAmount) => {
+      if (addition[color]) newPool[color] = addition[color] + (pool[color] || 0)
+    }
+  )
+
+  return newPool
+}
 
 export const getOpponentArea = (area: PlayerArea): PlayerArea => ({
   ...area,

@@ -1,4 +1,4 @@
-import { Card } from '../card'
+import { Card, ManaAmount } from '../card'
 import { Phase } from './constants'
 
 export interface Game {
@@ -23,9 +23,11 @@ export interface PlayerArea {
   graveyard?: GameCard[]
   hand: GameCard[]
   library: GameCard[]
+  manaPool: ManaAmount
 }
 
 interface Turn {
   playerId: string
   phase: Phase
+  landWasPlayed: boolean
 }

@@ -8,6 +8,7 @@ import {
   getCardAttributeDisplay,
 } from '../../helpers/card'
 import {
+  Attribute,
   Attributes,
   Image,
   ManaCost,
@@ -17,15 +18,25 @@ import {
 } from './style'
 
 interface Props {
+  activateAbility?: (attributeIndex: number) => void
   card: GameCard
   onClick?: () => void
 }
 
 export const Card: React.FC<Props> = ({
-  card: { name, manaCost, type, attributes, basePower, baseToughness },
+  activateAbility,
+  card: {
+    isTapped,
+    name,
+    manaCost,
+    type,
+    attributes,
+    basePower,
+    baseToughness,
+  },
   onClick,
 }) => (
-  <Wrap onClick={onClick}>
+  <Wrap isTapped={isTapped} onClick={onClick}>
     {manaCost && <ManaCost>{getManaAmountDisplay(manaCost)}</ManaCost>}
 
     <Image>{name}</Image>
@@ -34,8 +45,17 @@ export const Card: React.FC<Props> = ({
 
     <Attributes>
       {attributes &&
-        attributes.map(attribute => (
-          <li>{getCardAttributeDisplay(attribute)}</li>
+        attributes.map((attribute, index) => (
+          <Attribute
+            key={index}
+            onClick={
+              activateAbility && attribute.type === 'ActivatedAbility'
+                ? () => activateAbility(index)
+                : undefined
+            }
+          >
+            {getCardAttributeDisplay(attribute)}
+          </Attribute>
         ))}
     </Attributes>
 

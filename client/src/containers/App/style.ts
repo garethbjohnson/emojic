@@ -5,9 +5,10 @@ export const Battlefield = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
-  transform: scale(0.6);
+  transform: perspective(64rem) rotateX(30deg) scale(0.6);
 
   > * {
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
     flex-shrink: 0;
     margin: 8px;
   }

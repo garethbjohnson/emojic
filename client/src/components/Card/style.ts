@@ -1,4 +1,17 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
+
+export const Attribute = styled.li<{ onClick?: Function }>`
+  ${props =>
+    props.onClick &&
+    css`
+      cursor: pointer;
+      transition: color 0.2s;
+
+      &:hover {
+        color: blue;
+      }
+    `}
+`
 
 export const Attributes = styled.ul`
   background-color: whitesmoke;
@@ -45,16 +58,17 @@ export const Type = styled.div`
   padding: 8px;
 `
 
-export const Wrap = styled.div`
+export const Wrap = styled.div<{ isTapped?: boolean }>`
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 320px;
   padding: 12px;
   position: relative;
+  ${props => props.isTapped && 'transform: rotateZ(90deg);'}
+  transition: transform 0.5s;
   user-select: none;
   width: 240px;
 

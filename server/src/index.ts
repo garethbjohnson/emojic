@@ -4,10 +4,9 @@ import express, { Request } from 'express'
 import withWebSockets from 'express-ws'
 import WebSocket from 'ws'
 
-import { Move, MoveType } from 'emojic-shared'
+import { Game, Move, MoveType, Response } from 'emojic-shared'
 
-import { createGame, playCard } from './game/controllers'
-import { getPlayerGame } from './game/helpers'
+import { activateAbility, createGame, playCard } from './game/controllers'
 
 dotenv.config()
 
@@ -24,26 +23,52 @@ app.post('/api/games', createGame)
 app.ws('/api/games/:gameId', (webSocket: WebSocket, request: Request) => {
   webSocket.on('close', () => console.log(request.params.gameId, 'close'))
 
-  webSocket.on('message', (message: string) => {
+  webSocket.on('message', (requestMessage: string) => {
     let move: Move
 
     try {
-      move = JSON.parse(message)
+      move = JSON.parse(requestMessage)
     } catch {
       return
     }
 
-    const { playerId, data } = move
+    let playerGame: Game
+    let response: Response
+
+    let responseMessage: string
 
     switch (move.type) {
+      case MoveType.ACTIVATE_ABILITY:
+        try {
+          playerGame = activateAbility(
+            request.params.gameId,
+            move.playerId,
+            move.data.cardId,
+            move.data.attributeIndex
+          )
+          response = { status: 'SUCCESS', game: playerGame }
+        } catch (error) {
+          response = { status: 'FAILURE', message: error.message }
+        }
+
+        responseMessage = JSON.stringify(response)
+        webSocket.send(responseMessage)
+        return
+
       case MoveType.PLAY_CARD:
-        const playerGame = playCard(
-          request.params.gameId,
-          playerId,
-          data.cardId
-        )
-        const message = JSON.stringify(playerGame)
-        webSocket.send(message)
+        try {
+          playerGame = playCard(
+            request.params.gameId,
+            move.playerId,
+            move.data.cardId
+          )
+          response = { status: 'SUCCESS', game: playerGame }
+        } catch (error) {
+          response = { status: 'FAILURE', message: error.message }
+        }
+
+        responseMessage = JSON.stringify(response)
+        webSocket.send(responseMessage)
         return
 
       default:

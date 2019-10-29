@@ -4,6 +4,7 @@ import {
   CardType,
   EffectGetMana,
   ManaAmount,
+  Phase,
 } from 'emojic-shared'
 
 const getActivatedAbilityCostDisplay = (
@@ -61,6 +62,15 @@ export const getManaAmountDisplay = (amount: ManaAmount): string => {
   if (amount.white) display = `${display}${'☀️'.repeat(amount.white)}`
   return display
 }
+
+export const getPhaseDisplay = (phase: Phase): string =>
+  ({
+    [Phase.Upkeep]: 'Upkeep',
+    [Phase.Main1]: 'Main',
+    [Phase.Combat]: 'Combat',
+    [Phase.Main2]: 'Main',
+    [Phase.End]: 'End',
+  }[phase])
 
 const isEffectGetMana = (
   effect: AttributeActivatedAbility['effect']
