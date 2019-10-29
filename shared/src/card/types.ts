@@ -20,7 +20,7 @@ export interface Card {
 
 export interface CardType {
   modifier?: 'Basic' | 'Legendary'
-  main: 'Artifact' | 'Creature' | 'Enchantment' | 'Instant' | 'Land' | 'Sorcery'
+  main: 'Artifact' | 'Creature' | 'Enchantment' | 'Instant' | 'Mana' | 'Sorcery'
   subtypes?: (
     | 'Aura'
     | 'Demon'

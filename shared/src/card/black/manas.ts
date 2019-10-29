@@ -1,11 +1,11 @@
 import { Card } from '../types'
 
-export const blackLands: Card[] = [
+export const blackManas: Card[] = [
   {
     name: '💀',
     type: {
       modifier: 'Basic',
-      main: 'Land',
+      main: 'Mana',
     },
     attributes: [
       {

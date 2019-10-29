@@ -1,2 +1,2 @@
 export * from './creatures'
-export * from './lands'
+export * from './manas'

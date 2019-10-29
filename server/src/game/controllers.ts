@@ -106,7 +106,7 @@ export const createGame = (_: Request, response: Response): void => {
     turn: {
       playerId,
       phase: Phase.Main1,
-      landWasPlayed: false,
+      manaWasPlayed: false,
     },
   }
 
@@ -127,8 +127,8 @@ export const playCard = (
   const card = playerArea.hand.find(card => card.id === cardId)
   if (!card) throw new Error('Card not found')
 
-  if (card.type.main === 'Land' && game.turn.landWasPlayed)
-    throw new Error('Cannot play more than one land per turn')
+  if (card.type.main === 'Mana' && game.turn.manaWasPlayed)
+    throw new Error('Cannot play more than one mana per turn')
 
   const manaIsEnough =
     !card.manaCost || getManaIsEnough(card.manaCost, playerArea.manaPool)
@@ -149,7 +149,7 @@ export const playCard = (
     ],
     turn: {
       ...game.turn,
-      landWasPlayed: card.type.main === 'Land' ? true : game.turn.landWasPlayed,
+      manaWasPlayed: card.type.main === 'Mana' ? true : game.turn.manaWasPlayed,
     },
   }
 

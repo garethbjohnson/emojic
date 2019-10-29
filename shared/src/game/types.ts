@@ -29,5 +29,5 @@ export interface PlayerArea {
 interface Turn {
   playerId: string
   phase: Phase
-  landWasPlayed: boolean
+  manaWasPlayed: boolean
 }
