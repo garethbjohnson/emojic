@@ -9,14 +9,14 @@ export const Attributes = styled.ul`
   justify-content: center;
   list-style: none;
   margin: 0;
-  padding: 4px;
+  padding: 8px;
 `
 
 export const Image = styled.h3`
   align-items: center;
   display: flex;
-  font-size: 4rem;
-  flex-grow: 1;
+  font-size: 6rem;
+  height: 140px;
   justify-content: center;
   margin: 0;
 `
@@ -33,7 +33,7 @@ export const PowerToughness = styled.div`
   border: 4px solid white;
   border-radius: 2px;
   bottom: 4px;
-  padding: 4px;
+  padding: 8px;
   position: absolute;
   right: 4px;
 `
@@ -42,7 +42,7 @@ export const Type = styled.div`
   background-color: whitesmoke;
   border-radius: 2px;
   flex-grow: 0;
-  padding: 4px;
+  padding: 8px;
 `
 
 export const Wrap = styled.div`
