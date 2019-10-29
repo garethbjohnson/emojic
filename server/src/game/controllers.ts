@@ -2,7 +2,13 @@ import { Request, Response } from 'express'
 
 import { blackDeck, Game, Phase } from 'emojic-shared'
 
-import { getPlayerGame, getShuffled, makeGameCard, makeId } from './helpers'
+import {
+  getPlayerGame,
+  getShuffled,
+  getSortedHand,
+  makeGameCard,
+  makeId,
+} from './helpers'
 
 const games: Record<string, Game> = {}
 
@@ -15,7 +21,10 @@ export const createGame = (_: Request, response: Response): void => {
 
   // TODO: let the player choose a deck.
   const unshuffledLibrary = blackDeck.map(makeGameCard)
-  const library = getShuffled(unshuffledLibrary)
+  const fullLibrary = getShuffled(unshuffledLibrary)
+
+  const unsortedHand = fullLibrary.slice(0, 7)
+  const library = fullLibrary.slice(7)
 
   // TODO: randomise starting player.
   // TODO: allow mulligans.
@@ -29,8 +38,8 @@ export const createGame = (_: Request, response: Response): void => {
         battlefield: [],
         exile: [],
         graveyard: [],
-        hand: library.slice(0, 7),
-        library: library.slice(7),
+        hand: getSortedHand(unsortedHand),
+        library,
       },
     ],
     turn: {

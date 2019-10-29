@@ -1,4 +1,10 @@
-import { Card, Game, GameCard, PlayerArea } from 'emojic-shared'
+import {
+  Card,
+  Game,
+  GameCard,
+  getConvertedManaCost,
+  PlayerArea,
+} from 'emojic-shared'
 
 export const getHiddenCards = (cards: GameCard[]): GameCard[] =>
   cards.map(_ => hiddenCard)
@@ -31,6 +37,21 @@ export const getShuffled = <T = GameCard>(items: T[]): T[] => {
   }
 
   return newItems
+}
+
+export const getSortedHand = (hand: GameCard[]): GameCard[] => {
+  const newHand = hand.slice()
+
+  newHand.sort((card1: GameCard, card2: GameCard) => {
+    const cost1 = card1.manaCost ? getConvertedManaCost(card1.manaCost) : 0
+    const cost2 = card2.manaCost ? getConvertedManaCost(card2.manaCost) : 0
+
+    if (cost1 < cost2) return -1
+    if (cost1 > cost2) return 1
+    if (cost1 === cost2) return 0
+  })
+
+  return newHand
 }
 
 export const makeGameCard = (card: Card): GameCard => ({
