@@ -1,14 +1,17 @@
 import { Reducer } from 'redux'
 
-import { Game } from 'emojic-shared'
+import { Game, makeId } from 'emojic-shared'
 
 import { ActionType, EmojicAction } from './actions'
 
 export interface State {
   game?: Game
+  playerId: string
 }
 
-const initialState: State = {}
+const initialState: State = {
+  playerId: makeId(),
+}
 
 export const reducer: Reducer<State, EmojicAction> = (
   state: State = initialState,

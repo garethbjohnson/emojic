@@ -6,6 +6,7 @@ import {
   Phase,
   PlayerArea,
   blackDeck,
+  makeId,
 } from 'emojic-shared'
 
 import {
@@ -16,7 +17,6 @@ import {
   getShuffled,
   getSortedCards,
   makeGameCard,
-  makeId,
 } from './helpers'
 
 const games: Record<string, Game> = {}
@@ -103,12 +103,12 @@ export const continueTurn = (gameId: string, playerId: string): Game => {
   return games[gameId]
 }
 
-export const createGame = (_: Request, response: Response): void => {
-  // TODO: take the player's ID.
+export const createGame = (request: Request, response: Response): void => {
   // TODO: authenticate the player.
   // TODO: pair the player with another player.
   // TODO: let the player play against AI.
-  const playerId = makeId()
+  console.log('request.body:', request.body)
+  const { playerId } = request.body
 
   // TODO: let the player choose a deck.
   const unshuffledLibrary = blackDeck.map(makeGameCard)

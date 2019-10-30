@@ -10,6 +10,7 @@ import {
 import {
   Attribute,
   Attributes,
+  Back,
   Image,
   Main,
   ManaCost,
@@ -67,5 +68,7 @@ export const Card: React.FC<Props> = ({
         </PowerToughness>
       )}
     </Main>
+
+    <Back isTapped={isTapped} />
   </Wrap>
 )

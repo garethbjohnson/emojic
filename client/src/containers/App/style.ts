@@ -4,7 +4,6 @@ export const Battlefield = styled.div`
   align-content: center;
   align-items: center;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   transform: perspective(64rem) rotateX(30deg) scale(0.75);
 
@@ -56,6 +55,43 @@ export const Hand = styled.div<{ cardCount: number }>`
       }
     }
   }
+`
+
+export const LibraryCardWrap = styled.div<{
+  index: number
+  totalCount: number
+}>`
+  position: absolute !important;
+  transform: translateZ(${props => 2 * (props.totalCount - props.index)}px);
+  transform-style: preserve-3d;
+  z-index: ${props => props.totalCount - props.index};
+
+  &:last-child {
+    height: 320px;
+  }
+
+  > * {
+    transform: rotateY(180deg);
+
+    > * {
+      box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+  }
+`
+
+export const LibraryWrap = styled.div`
+  bottom: 32px;
+  height: 320px;
+  left: 32px;
+  position: absolute;
+  transform: perspective(64rem) rotateX(30deg) scale(0.75);
+  transform-style: preserve-3d;
+  width: 100%;
+  z-index: -1;
+`
+
+export const ManaPool = styled.span`
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
 `
 
 export const Wrap = styled.div`

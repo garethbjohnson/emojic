@@ -5,6 +5,7 @@ import {
   ManaAmount,
   PlayerArea,
   getConvertedManaCost,
+  makeId,
 } from 'emojic-shared'
 
 export const getHiddenCards = (cards: GameCard[]): GameCard[] =>
@@ -117,9 +118,6 @@ export const makeGameCard = (card: Card): GameCard => ({
   id: makeId(),
   ...card,
 })
-
-export const makeId = (): string =>
-  [...Array(16)].map(() => Math.floor(Math.random() * 36).toString(36)).join('')
 
 export const hiddenCard: GameCard = {
   id: `mystery`,

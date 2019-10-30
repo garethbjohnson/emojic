@@ -3,17 +3,29 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import {
   MoveActivateAbility,
+  MoveContinueTurn,
   MovePlayCard,
   MoveType,
   Response,
-  MoveContinueTurn,
 } from 'emojic-shared'
 
 import { Card } from '../../components/Card'
 import { getManaAmountDisplay, getPhaseDisplay } from '../../helpers/card'
 import { WEB_SOCKET_API_URL } from '../../helpers/constants'
-import { createGame, getUpdateGameAction, selectGame } from '../../store'
-import { Battlefield, Hand, Wrap } from './style'
+import {
+  createGame,
+  getUpdateGameAction,
+  selectGame,
+  selectPlayerId,
+} from '../../store'
+import {
+  Battlefield,
+  Hand,
+  LibraryCardWrap,
+  LibraryWrap,
+  ManaPool,
+  Wrap,
+} from './style'
 
 let webSocket: WebSocket
 
@@ -57,10 +69,13 @@ export const App: React.FC = () => {
   const dispatch = useDispatch()
 
   const game = useSelector(selectGame)
-  const playerArea = game && game.playerAreas[0]
+  const playerId = useSelector(selectPlayerId)
+
+  const playerArea =
+    game && game.playerAreas.find(area => area.playerId === playerId)
 
   React.useEffect(() => {
-    createGame(dispatch)
+    createGame(dispatch, playerId!)
   }, [])
 
   React.useEffect(() => {
@@ -110,9 +125,26 @@ export const App: React.FC = () => {
               : "Opponent's turn"}{' '}
             ({getPhaseDisplay(game.turn.phase)} phase)
           </h2>{' '}
-          <h2>
-            Mana pool: {getManaAmountDisplay(playerArea!.manaPool) || 'No mana'}
-          </h2>
+          <h3>
+            Mana pool:{' '}
+            {getManaAmountDisplay(playerArea!.manaPool) ? (
+              <ManaPool>{getManaAmountDisplay(playerArea!.manaPool)}</ManaPool>
+            ) : (
+              'Empty'
+            )}
+          </h3>
+          <LibraryWrap>
+            <div>
+              {playerArea!.library.map((card, index) => (
+                <LibraryCardWrap
+                  index={index}
+                  totalCount={playerArea!.library.length}
+                >
+                  <Card card={card} key={card.id} />
+                </LibraryCardWrap>
+              ))}
+            </div>
+          </LibraryWrap>
           <Hand cardCount={playerArea!.hand.length}>
             {playerArea!.hand.map(card => (
               <Card

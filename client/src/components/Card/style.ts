@@ -39,6 +39,7 @@ export const Image = styled.h3`
 `
 
 export const Main = styled.div<{ isTapped?: boolean }>`
+  backface-visibility: hidden;
   background-color: white;
   border-radius: 8px;
   box-sizing: border-box;
@@ -52,10 +53,19 @@ export const Main = styled.div<{ isTapped?: boolean }>`
   transition: transform 0.5s;
   user-select: none;
   width: 240px;
+  z-index: 2;
 
   > * + * {
     margin-top: 4px;
   }
+`
+
+export const Back = styled(Main)`
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: ${props => props.isTapped && 'rotateZ(90deg)'} rotateY(180deg);
+  z-index: 1;
 `
 
 export const ManaCost = styled.div`
@@ -85,5 +95,7 @@ export const Type = styled.div`
 export const Wrap = styled.div<{ isTapped?: boolean }>`
   position: relative;
   width: ${props => (props.isTapped ? cardHeight : cardWidth)};
+  transform-origin: center;
+  transform-style: preserve-3d;
   transition: width 0.2s;
 `
