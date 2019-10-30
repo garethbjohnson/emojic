@@ -5,6 +5,7 @@ import {
   EffectGetMana,
   ManaAmount,
   Phase,
+  getManaAmountDisplay,
 } from 'emojic-shared'
 
 const getActivatedAbilityCostDisplay = (
@@ -52,16 +53,6 @@ export const getCardTypeDisplay = (type: CardType): string => {
 
 export const getEffectGetManaDisplay = (manaAmount: ManaAmount): string =>
   `add ${getManaAmountDisplay(manaAmount)} to your mana pool`
-
-export const getManaAmountDisplay = (amount: ManaAmount): string => {
-  let display = amount.colorless ? String(amount.colorless) : ''
-  if (amount.black) display = `${display}${'💀'.repeat(amount.black)}`
-  if (amount.blue) display = `${display}${'💧'.repeat(amount.blue)}`
-  if (amount.green) display = `${display}${'🌳'.repeat(amount.green)}`
-  if (amount.red) display = `${display}${'🔥'.repeat(amount.red)}`
-  if (amount.white) display = `${display}${'☀️'.repeat(amount.white)}`
-  return display
-}
 
 export const getPhaseDisplay = (phase: Phase): string =>
   ({

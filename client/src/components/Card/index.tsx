@@ -1,12 +1,8 @@
 import React from 'react'
 
-import { GameCard } from 'emojic-shared'
+import { GameCard, getManaAmountDisplay } from 'emojic-shared'
 
-import {
-  getCardTypeDisplay,
-  getManaAmountDisplay,
-  getCardAttributeDisplay,
-} from '../../helpers/card'
+import { getCardTypeDisplay, getCardAttributeDisplay } from '../../helpers/card'
 import {
   Attribute,
   Attributes,

@@ -7,10 +7,11 @@ import {
   MovePlayCard,
   MoveType,
   Response,
+  getManaAmountDisplay,
 } from 'emojic-shared'
 
 import { Card } from '../../components/Card'
-import { getManaAmountDisplay, getPhaseDisplay } from '../../helpers/card'
+import { getPhaseDisplay } from '../../helpers/card'
 import { WEB_SOCKET_API_URL } from '../../helpers/constants'
 import {
   createGame,

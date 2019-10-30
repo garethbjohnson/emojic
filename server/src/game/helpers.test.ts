@@ -1,6 +1,11 @@
-import { ManaAmount } from 'emojic-shared'
+import { Card, ManaAmount, getManaAmountDisplay } from 'emojic-shared'
 
-import { getManaMinusCost } from './helpers'
+import {
+  getManaMinusCost,
+  hiddenCard,
+  getSortedCards,
+  getColor,
+} from './helpers'
 
 const getManaAmount = (string: string): ManaAmount => {
   const pattern = /^([0-9]*)[^0-9]*$/
@@ -16,6 +21,31 @@ const getManaAmount = (string: string): ManaAmount => {
     white: (string.match(/☀️/g) || []).length,
   }
 }
+
+const mockCard = (cardProps?: Partial<Card>): Card => ({
+  ...hiddenCard,
+  ...cardProps,
+})
+
+const mockMana = (amount: ManaAmount): Card => ({
+  ...hiddenCard,
+  type: {
+    modifier: 'Basic',
+    main: 'Mana',
+  },
+  attributes: [
+    {
+      type: 'ActivatedAbility',
+      cost: {
+        tap: true,
+      },
+      effect: {
+        type: 'GetMana',
+        amount,
+      },
+    },
+  ],
+})
 
 describe('getManaMinusCost', () => {
   const testMap: [string, string, string | typeof Error][] = [
@@ -54,5 +84,52 @@ describe('getManaMinusCost', () => {
         expect(result).toEqual(expectedResult)
       })
     }
+  }
+})
+
+describe('getSortedCards', () => {
+  const manaG = mockMana({ green: 1 })
+  const manaR = mockMana({ red: 1 })
+  const card1 = mockCard({ manaCost: { colorless: 1 } })
+  const cardG = mockCard({ manaCost: { green: 1 } })
+  const cardR = mockCard({ manaCost: { red: 1 } })
+  const card1G = mockCard({ manaCost: { colorless: 1, green: 1 } })
+  const cardGR = mockCard({ manaCost: { green: 1, red: 1 } })
+
+  const testMap: [Card[], Card[]][] = [
+    // [cards, expectedResult]
+    [[], []],
+    [[cardG], [cardG]],
+    [[manaG], [manaG]],
+    [[card1, cardG], [card1, cardG]],
+    [[cardG, card1], [card1, cardG]],
+    [[card1G, cardG], [cardG, card1G]],
+    [[card1G, cardG, cardGR], [cardG, card1G, cardGR]],
+    [[cardG, cardR, card1G], [cardG, card1G, cardR]],
+    [[manaG, manaR], [manaG, manaR]],
+    [[manaR, manaG], [manaG, manaR]],
+    [[manaG, card1], [manaG, card1]],
+    [[card1, manaG], [manaG, card1]],
+    [[card1, manaR, manaG], [manaG, manaR, card1]],
+  ]
+
+  const getCardsDisplay = (cards: Card[]) =>
+    '[' +
+    cards
+      .map((card: Card) =>
+        card.type.main === 'Mana'
+          ? `${getColor(card)}-mana`
+          : (card.manaCost && getManaAmountDisplay(card.manaCost)) || 0
+      )
+      .join(', ') +
+    ']'
+
+  for (const [cards, expectedResult] of testMap) {
+    test(`${getCardsDisplay(cards)} sorts to ${getCardsDisplay(
+      expectedResult
+    )}`, () => {
+      const result = getSortedCards<Card>(cards)
+      expect(result).toEqual(expectedResult)
+    })
   }
 })

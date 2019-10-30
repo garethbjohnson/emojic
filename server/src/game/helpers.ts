@@ -8,6 +8,48 @@ import {
   makeId,
 } from 'emojic-shared'
 
+const colors = ['black', 'blue', 'green', 'red', 'white']
+const colorLessAndColors = ['colorless', ...colors]
+const colorLessAndColorsAndMulticolor = [...colorLessAndColors, 'multicolor']
+
+export const getColor = (
+  card: Card | GameCard
+):
+  | 'colorless'
+  | 'black'
+  | 'blue'
+  | 'black'
+  | 'green'
+  | 'red'
+  | 'white'
+  | 'multicolor' => {
+  // TODO: handle nonbasic lands.
+  if (card.type.main === 'Mana' && card.type.modifier === 'Basic') {
+    const manaAmount = card.attributes[0].effect.amount
+    if (manaAmount.black) return 'black'
+    if (manaAmount.blue) return 'blue'
+    if (manaAmount.green) return 'green'
+    if (manaAmount.red) return 'red'
+    if (manaAmount.white) return 'white'
+  }
+
+  const { manaCost } = card
+
+  if (!manaCost) return 'colorless'
+
+  const { colorless, black, blue, red, green, white } = manaCost
+
+  if (colorless && !black && !blue && !red && !green && !white)
+    return 'colorless'
+  if (!colorless && black && blue && !red && !green && !white) return 'black'
+  if (!colorless && !black && blue && !red && !green && !white) return 'blue'
+  if (!colorless && !black && !blue && red && !green && !white) return 'red'
+  if (!colorless && !black && !blue && !red && green && !white) return 'green'
+  if (!colorless && !black && !blue && !red && !green && white) return 'white'
+
+  return 'multicolor'
+}
+
 export const getHiddenCards = (cards: GameCard[]): GameCard[] =>
   cards.map(_ => hiddenCard)
 
@@ -31,9 +73,6 @@ export const getManaMinusCost = (
   const newPool = { ...pool }
   const costLeft = { ...cost }
 
-  const colors = ['black', 'blue', 'green', 'red', 'white']
-  const colorsWithColorless = [...colors, 'colorless']
-
   colors.forEach((color: keyof ManaAmount) => {
     if (cost[color]) {
       newPool[color] = (newPool[color] || 0) - cost[color]
@@ -42,7 +81,7 @@ export const getManaMinusCost = (
     }
   })
 
-  for (const color of colorsWithColorless) {
+  for (const color of colorLessAndColors) {
     while (newPool[color as keyof ManaAmount] > 0 && costLeft.colorless > 0) {
       newPool[color as keyof ManaAmount] =
         (newPool[color as keyof ManaAmount] || 0) - 1
@@ -99,16 +138,26 @@ export const getShuffled = <T = GameCard>(items: T[]): T[] => {
   return newItems
 }
 
-export const getSortedCards = (hand: GameCard[]): GameCard[] => {
+export const getSortedCards = <T extends Card = GameCard>(hand: T[]): T[] => {
   const newHand = hand.slice()
 
-  newHand.sort((card1: GameCard, card2: GameCard) => {
+  newHand.sort((card1: T, card2: T) => {
+    if (card1.type.main === 'Mana' && card2.type.main !== 'Mana') return -1
+    if (card1.type.main !== 'Mana' && card2.type.main === 'Mana') return 1
+
+    const color1 = getColor(card1)
+    const colorIndex1 = colorLessAndColorsAndMulticolor.indexOf(color1)
+    const color2 = getColor(card2)
+    const colorIndex2 = colorLessAndColorsAndMulticolor.indexOf(color2)
+
+    if (colorIndex1 < colorIndex2) return -1
+    if (colorIndex1 > colorIndex2) return 1
+
     const cost1 = card1.manaCost ? getConvertedManaCost(card1.manaCost) : 0
     const cost2 = card2.manaCost ? getConvertedManaCost(card2.manaCost) : 0
 
     if (cost1 < cost2) return -1
     if (cost1 > cost2) return 1
-    if (cost1 === cost2) return 0
   })
 
   return newHand

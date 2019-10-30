@@ -5,7 +5,7 @@ import {
   Game,
   Phase,
   PlayerArea,
-  blackDeck,
+  blackBlueDeck,
   makeId,
 } from 'emojic-shared'
 
@@ -111,7 +111,7 @@ export const createGame = (request: Request, response: Response): void => {
   const { playerId } = request.body
 
   // TODO: let the player choose a deck.
-  const unshuffledLibrary = blackDeck.map(makeGameCard)
+  const unshuffledLibrary = blackBlueDeck.map(makeGameCard)
   const fullLibrary = getShuffled(unshuffledLibrary)
 
   const unsortedHand = fullLibrary.slice(0, 7)

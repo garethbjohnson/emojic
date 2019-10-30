@@ -97,6 +97,7 @@ export const LibraryWrap = styled.div`
 export const LibraryManaWrap = styled.div`
   display: flex;
   height: 320px;
+  z-index: 2;
 `
 
 export const ManaWrap = styled.div`
@@ -127,6 +128,7 @@ export const Table = styled.div`
   height: calc(100% - 300px);
   justify-content: center;
   left: 0;
+  margin-top: -64px;
   position: absolute;
   top: 0;
   transform: perspective(64rem) rotateX(30deg) scale(0.75);
