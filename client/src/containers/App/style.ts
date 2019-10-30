@@ -1,11 +1,12 @@
 import styled from 'styled-components'
 
-export const Battlefield = styled.div`
+export const MainBattlefield = styled.div`
   align-content: center;
   align-items: center;
   display: flex;
+  height: 320px;
   justify-content: center;
-  transform: perspective(64rem) rotateX(30deg) scale(0.75);
+  margin-bottom: 32px;
 
   > * {
     flex-shrink: 0;
@@ -57,6 +58,14 @@ export const Hand = styled.div<{ cardCount: number }>`
   }
 `
 
+export const HandWrap = styled.div`
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+`
+
 export const LibraryCardWrap = styled.div<{
   index: number
   totalCount: number
@@ -80,26 +89,65 @@ export const LibraryCardWrap = styled.div<{
 `
 
 export const LibraryWrap = styled.div`
-  bottom: 32px;
+  flex-shrink: 0;
+  margin-right: 16px;
+  width: 240px;
+`
+
+export const LibraryManaWrap = styled.div`
+  display: flex;
   height: 320px;
-  left: 32px;
-  position: absolute;
-  transform: perspective(64rem) rotateX(30deg) scale(0.75);
-  transform-style: preserve-3d;
-  width: 100%;
-  z-index: -1;
+`
+
+export const ManaWrap = styled.div`
+  display: flex;
+  flex-grow: 1;
+
+  > * {
+    flex-shrink: 1;
+
+    & + * {
+      margin-left: 16px;
+    }
+
+    > * {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+  }
 `
 
 export const ManaPool = styled.span`
   text-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
 `
 
-export const Wrap = styled.div`
+export const Table = styled.div`
   align-content: center;
-  align-items: center;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100% - 300px);
   justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: perspective(64rem) rotateX(30deg) scale(0.75);
+  transform-style: preserve-3d;
+  width: 100%;
+  z-index: 1;
+`
+
+export const Toolbar = styled.div`
+  align-content: center;
+  align-items: baseline;
+  display: flex;
+  justify-content: center;
+
+  > * + * {
+    margin-left: 16px;
+  }
+`
+
+export const Wrap = styled.div`
+  align-items: center;
+  height: 100%;
   width: 100%;
 `

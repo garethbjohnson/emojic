@@ -19,12 +19,17 @@ import {
   selectPlayerId,
 } from '../../store'
 import {
-  Battlefield,
   Hand,
+  HandWrap,
+  LibraryManaWrap,
   LibraryCardWrap,
-  LibraryWrap,
+  MainBattlefield,
   ManaPool,
+  Table,
+  Toolbar,
   Wrap,
+  LibraryWrap,
+  ManaWrap,
 } from './style'
 
 let webSocket: WebSocket
@@ -103,60 +108,92 @@ export const App: React.FC = () => {
 
       {game && (
         <>
-          <Battlefield>
-            {playerArea!.battlefield &&
-              playerArea!.battlefield.map(card => (
+          <Table>
+            <MainBattlefield>
+              {playerArea!.battlefield &&
+                playerArea!.battlefield
+                  .filter(card => card.type.main !== 'Mana')
+                  .map(card => (
+                    <Card
+                      activateAbility={(attributeIndex: number) =>
+                        activateAbility(
+                          playerArea!.playerId,
+                          card.id,
+                          attributeIndex
+                        )
+                      }
+                      card={card}
+                      key={card.id}
+                    />
+                  ))}
+            </MainBattlefield>
+
+            <LibraryManaWrap>
+              <LibraryWrap>
+                {playerArea!.library.map((card, index) => (
+                  <LibraryCardWrap
+                    index={index}
+                    totalCount={playerArea!.library.length}
+                  >
+                    <Card card={card} key={card.id} />
+                  </LibraryCardWrap>
+                ))}
+              </LibraryWrap>
+
+              <ManaWrap>
+                {playerArea!.battlefield &&
+                  playerArea!.battlefield
+                    .filter(card => card.type.main === 'Mana')
+                    .map(card => (
+                      <Card
+                        activateAbility={(attributeIndex: number) =>
+                          activateAbility(
+                            playerArea!.playerId,
+                            card.id,
+                            attributeIndex
+                          )
+                        }
+                        card={card}
+                        key={card.id}
+                      />
+                    ))}
+              </ManaWrap>
+            </LibraryManaWrap>
+          </Table>
+
+          <HandWrap>
+            <Hand cardCount={playerArea!.hand.length}>
+              {playerArea!.hand.map(card => (
                 <Card
-                  activateAbility={(attributeIndex: number) =>
-                    activateAbility(
-                      playerArea!.playerId,
-                      card.id,
-                      attributeIndex
-                    )
-                  }
                   card={card}
                   key={card.id}
+                  onClick={() => playCard(playerArea!.playerId, card.id)}
                 />
               ))}
-          </Battlefield>
-          <h2>
-            {game.turn.playerId === playerArea!.playerId
-              ? 'Your turn'
-              : "Opponent's turn"}{' '}
-            ({getPhaseDisplay(game.turn.phase)} phase)
-          </h2>{' '}
-          <h3>
-            Mana pool:{' '}
-            {getManaAmountDisplay(playerArea!.manaPool) ? (
-              <ManaPool>{getManaAmountDisplay(playerArea!.manaPool)}</ManaPool>
-            ) : (
-              'Empty'
-            )}
-          </h3>
-          <LibraryWrap>
-            <div>
-              {playerArea!.library.map((card, index) => (
-                <LibraryCardWrap
-                  index={index}
-                  totalCount={playerArea!.library.length}
-                >
-                  <Card card={card} key={card.id} />
-                </LibraryCardWrap>
-              ))}
-            </div>
-          </LibraryWrap>
-          <Hand cardCount={playerArea!.hand.length}>
-            {playerArea!.hand.map(card => (
-              <Card
-                card={card}
-                key={card.id}
-                onClick={() => playCard(playerArea!.playerId, card.id)}
-              />
-            ))}
-          </Hand>
-          <button onClick={() => continueTurn(playerArea!.playerId)}>
-            Next turn
-          </button>
+            </Hand>
+
+            <Toolbar>
+              <h2>
+                {game.turn.playerId === playerArea!.playerId
+                  ? 'Your turn'
+                  : "Opponent's turn"}{' '}
+                ({getPhaseDisplay(game.turn.phase)} phase)
+              </h2>{' '}
+              <h3>
+                Mana pool:{' '}
+                {getManaAmountDisplay(playerArea!.manaPool) ? (
+                  <ManaPool>
+                    {getManaAmountDisplay(playerArea!.manaPool)}
+                  </ManaPool>
+                ) : (
+                  'Empty'
+                )}
+              </h3>
+              <button onClick={() => continueTurn(playerArea!.playerId)}>
+                Next turn
+              </button>
+            </Toolbar>
+          </HandWrap>
         </>
       )}
     </Wrap>
