@@ -77,8 +77,7 @@ export const App: React.FC = () => {
   const game = useSelector(selectGame)
   const playerId = useSelector(selectPlayerId)
 
-  const playerArea =
-    game && game.playerAreas.find(area => area.playerId === playerId)
+  const player = game && game.players.find(player => player.id === playerId)
 
   React.useEffect(() => {
     createGame(dispatch, playerId!)
@@ -111,17 +110,13 @@ export const App: React.FC = () => {
         <>
           <Table>
             <MainBattlefield>
-              {playerArea!.battlefield &&
-                playerArea!.battlefield
+              {player!.battlefield &&
+                player!.battlefield
                   .filter(card => card.type.main !== 'Mana')
                   .map(card => (
                     <Card
                       activateAbility={(attributeIndex: number) =>
-                        activateAbility(
-                          playerArea!.playerId,
-                          card.id,
-                          attributeIndex
-                        )
+                        activateAbility(player!.id, card.id, attributeIndex)
                       }
                       card={card}
                       key={card.id}
@@ -131,10 +126,10 @@ export const App: React.FC = () => {
 
             <LibraryManaWrap>
               <LibraryWrap>
-                {playerArea!.library.map((card, index) => (
+                {player!.library.map((card, index) => (
                   <LibraryCardWrap
                     index={index}
-                    totalCount={playerArea!.library.length}
+                    totalCount={player!.library.length}
                   >
                     <Card card={card} key={card.id} />
                   </LibraryCardWrap>
@@ -142,17 +137,13 @@ export const App: React.FC = () => {
               </LibraryWrap>
 
               <ManaWrap>
-                {playerArea!.battlefield &&
-                  playerArea!.battlefield
+                {player!.battlefield &&
+                  player!.battlefield
                     .filter(card => card.type.main === 'Mana')
                     .map(card => (
                       <Card
                         activateAbility={(attributeIndex: number) =>
-                          activateAbility(
-                            playerArea!.playerId,
-                            card.id,
-                            attributeIndex
-                          )
+                          activateAbility(player!.id, card.id, attributeIndex)
                         }
                         card={card}
                         key={card.id}
@@ -163,34 +154,32 @@ export const App: React.FC = () => {
           </Table>
 
           <HandWrap>
-            <Hand cardCount={playerArea!.hand.length}>
-              {playerArea!.hand.map(card => (
+            <Hand cardCount={player!.hand.length}>
+              {player!.hand.map(card => (
                 <Card
                   card={card}
                   key={card.id}
-                  onClick={() => playCard(playerArea!.playerId, card.id)}
+                  onClick={() => playCard(player!.id, card.id)}
                 />
               ))}
             </Hand>
 
             <Toolbar>
               <h2>
-                {game.turn.playerId === playerArea!.playerId
+                {game.turn.playerId === player!.id
                   ? 'Your turn'
                   : "Opponent's turn"}{' '}
                 ({getPhaseDisplay(game.turn.phase)} phase)
               </h2>{' '}
               <h3>
                 Mana pool:{' '}
-                {getManaAmountDisplay(playerArea!.manaPool) ? (
-                  <ManaPool>
-                    {getManaAmountDisplay(playerArea!.manaPool)}
-                  </ManaPool>
+                {getManaAmountDisplay(player!.manaPool) ? (
+                  <ManaPool>{getManaAmountDisplay(player!.manaPool)}</ManaPool>
                 ) : (
                   'Empty'
                 )}
               </h3>
-              <button onClick={() => continueTurn(playerArea!.playerId)}>
+              <button onClick={() => continueTurn(player!.id)}>
                 Next turn
               </button>
             </Toolbar>

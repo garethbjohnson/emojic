@@ -4,7 +4,7 @@ import {
   AttributeActivatedAbility,
   Game,
   Phase,
-  PlayerArea,
+  Player,
   blackBlueDeck,
   makeId,
 } from 'emojic-shared'
@@ -27,9 +27,9 @@ export const activateAbility = (
   cardId: string,
   attributeIndex: number
 ): Game => {
-  const { game, playerArea } = validateMoveBasics(gameId, playerId)
+  const { game, player } = validateMoveBasics(gameId, playerId)
 
-  const card = playerArea.battlefield.find(card => card.id === cardId)
+  const card = player.battlefield.find(card => card.id === cardId)
   if (!card) throw new Error('Card not found')
 
   const attribute = card.attributes[attributeIndex]
@@ -43,26 +43,22 @@ export const activateAbility = (
     throw new Error('Card is already tapped')
 
   const manaIsEnough =
-    !ability.cost.mana ||
-    getManaIsEnough(ability.cost.mana, playerArea.manaPool)
+    !ability.cost.mana || getManaIsEnough(ability.cost.mana, player.manaPool)
   if (!manaIsEnough) throw new Error('Not enough mana')
 
   if (ability.effect.type === 'GetMana') {
     games[gameId] = {
       ...game,
-      playerAreas: [
-        ...game.playerAreas.filter(area => area.playerId !== playerId),
+      players: [
+        ...game.players.filter(player => player.id !== playerId),
         {
-          ...playerArea,
+          ...player,
           battlefield: ability.cost.tap
-            ? playerArea.battlefield.map(card =>
+            ? player.battlefield.map(card =>
                 card.id === cardId ? { ...card, isTapped: true } : card
               )
-            : playerArea.battlefield,
-          manaPool: getManaPlusAddition(
-            playerArea.manaPool,
-            ability.effect.amount
-          ),
+            : player.battlefield,
+          manaPool: getManaPlusAddition(player.manaPool, ability.effect.amount),
         },
       ],
     }
@@ -74,23 +70,23 @@ export const activateAbility = (
 export const continueTurn = (gameId: string, playerId: string): Game => {
   // TODO: do actual turn handling.
 
-  const { game, playerArea } = validateMoveBasics(gameId, playerId)
+  const { game, player } = validateMoveBasics(gameId, playerId)
 
   if (game.turn.playerId !== playerId) throw new Error('Not your turn')
 
   games[gameId] = {
     ...game,
-    playerAreas: [
-      ...game.playerAreas.filter(area => area.playerId !== playerId),
+    players: [
+      ...game.players.filter(player => player.id !== playerId),
       {
-        ...playerArea,
-        battlefield: playerArea.battlefield.map(card => ({
+        ...player,
+        battlefield: player.battlefield.map(card => ({
           ...card,
           isTapped: false,
           hasSummoningSickness: false,
         })),
-        hand: getSortedCards([...playerArea.hand, playerArea.library[0]]),
-        library: playerArea.library.slice(1),
+        hand: getSortedCards([...player.hand, player.library[0]]),
+        library: player.library.slice(1),
         manaPool: {},
       },
     ],
@@ -122,9 +118,9 @@ export const createGame = (request: Request, response: Response): void => {
   const game: Game = {
     id: makeId(),
 
-    playerAreas: [
+    players: [
       {
-        playerId,
+        id: playerId,
 
         battlefield: [],
         exile: [],
@@ -153,35 +149,35 @@ export const playCard = (
   playerId: string,
   cardId: string
 ): Game => {
-  const { game, playerArea } = validateMoveBasics(gameId, playerId)
+  const { game, player } = validateMoveBasics(gameId, playerId)
 
-  const card = playerArea.hand.find(card => card.id === cardId)
+  const card = player.hand.find(card => card.id === cardId)
   if (!card) throw new Error('Card not found')
 
   if (card.type.main === 'Mana' && game.turn.manaWasPlayed)
     throw new Error('Cannot play more than one mana per turn')
 
   const manaIsEnough =
-    !card.manaCost || getManaIsEnough(card.manaCost, playerArea.manaPool)
+    !card.manaCost || getManaIsEnough(card.manaCost, player.manaPool)
   if (!manaIsEnough) throw new Error('Not enough mana')
 
   games[gameId] = {
     ...game,
-    playerAreas: [
-      ...game.playerAreas.filter(area => area.playerId !== playerId),
+    players: [
+      ...game.players.filter(player => player.id !== playerId),
       {
-        ...playerArea,
+        ...player,
         battlefield: getSortedCards([
-          ...playerArea.battlefield,
+          ...player.battlefield,
           {
             ...card,
             hasSummoningSickness: card.type.main === 'Creature' ? true : false,
           },
         ]),
-        hand: playerArea.hand.filter(card => card.id !== cardId),
+        hand: player.hand.filter(card => card.id !== cardId),
         manaPool: card.manaCost
-          ? getManaMinusCost(playerArea.manaPool, card.manaCost)
-          : playerArea.manaPool,
+          ? getManaMinusCost(player.manaPool, card.manaCost)
+          : player.manaPool,
       },
     ],
     turn: {
@@ -196,17 +192,17 @@ export const playCard = (
 export const validateMoveBasics = (
   gameId: string,
   playerId: string
-): { game: Game; playerArea: PlayerArea } => {
+): { game: Game; player: Player } => {
   const game = games[gameId]
   if (!game) throw new Error('Game not found')
 
-  const playerArea = game.playerAreas.find(area => area.playerId === playerId)
-  if (!playerArea) throw new Error('Player not found in game')
+  const player = game.players.find(player => player.id === playerId)
+  if (!player) throw new Error('Player not found in game')
 
   const phaseIsValid = [Phase.Main1, Phase.Combat, Phase.Main2].includes(
     game.turn.phase
   )
   if (!phaseIsValid) throw new Error('Cannot play card this phase')
 
-  return { game, playerArea }
+  return { game, player }
 }

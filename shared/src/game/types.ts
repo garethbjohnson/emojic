@@ -4,7 +4,7 @@ import { Phase } from './constants'
 export interface Game {
   id: string
 
-  playerAreas: PlayerArea[]
+  players: Player[]
   turn: Turn
 }
 
@@ -15,8 +15,8 @@ export interface GameCard extends Card {
   isTapped?: boolean
 }
 
-export interface PlayerArea {
-  playerId: string
+export interface Player {
+  id: string
 
   battlefield?: GameCard[]
   exile?: GameCard[]

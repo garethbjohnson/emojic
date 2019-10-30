@@ -3,7 +3,7 @@ import {
   Game,
   GameCard,
   ManaAmount,
-  PlayerArea,
+  Player,
   getConvertedManaCost,
   makeId,
 } from 'emojic-shared'
@@ -108,22 +108,22 @@ export const getManaPlusAddition = (
   return newPool
 }
 
-export const getOpponentArea = (area: PlayerArea): PlayerArea => ({
-  ...area,
-  hand: getHiddenCards(area.hand),
-  library: getHiddenCards(area.library),
+export const getOpponentArea = (player: Player): Player => ({
+  ...player,
+  hand: getHiddenCards(player.hand),
+  library: getHiddenCards(player.library),
 })
 
-export const getOwnArea = (area: PlayerArea): PlayerArea => ({
-  ...area,
-  library: getHiddenCards(area.library),
+export const getOwnArea = (player: Player): Player => ({
+  ...player,
+  library: getHiddenCards(player.library),
 })
 
 /** Get a game with cards hidden for the given player. */
 export const getPlayerGame = (game: Game, playerId: string): Game => ({
   ...game,
-  playerAreas: game.playerAreas.map(area =>
-    area.playerId === playerId ? getOwnArea(area) : getOpponentArea(area)
+  players: game.players.map(player =>
+    player.id === playerId ? getOwnArea(player) : getOpponentArea(player)
   ),
 })
 
