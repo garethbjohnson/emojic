@@ -23,6 +23,8 @@ export interface Player {
   graveyard?: GameCard[]
   hand: GameCard[]
   library: GameCard[]
+
+  life: number
   manaPool: ManaAmount
 }
 

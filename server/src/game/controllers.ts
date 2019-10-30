@@ -68,32 +68,62 @@ export const activateAbility = (
 }
 
 export const continueTurn = (gameId: string, playerId: string): Game => {
-  // TODO: do actual turn handling.
-
   const { game, player } = validateMoveBasics(gameId, playerId)
 
   if (game.turn.playerId !== playerId) throw new Error('Not your turn')
 
-  games[gameId] = {
-    ...game,
-    players: [
-      ...game.players.filter(player => player.id !== playerId),
-      {
-        ...player,
-        battlefield: player.battlefield.map(card => ({
-          ...card,
-          isTapped: false,
-          hasSummoningSickness: false,
-        })),
-        hand: getSortedCards([...player.hand, player.library[0]]),
-        library: player.library.slice(1),
-        manaPool: {},
-      },
-    ],
-    turn: {
-      ...game.turn,
-      manaWasPlayed: false,
-    },
+  switch (game.turn.phase) {
+    // TODO: put these in functions in another file.
+    // TODO: allow interrupts.
+    // TODO: handle the start and end steps.
+    // TODO: handle other players' turns.
+    case Phase.Main1:
+      // Go to Combat.
+      games[gameId] = {
+        ...game,
+        turn: {
+          ...game.turn,
+          phase: Phase.Combat,
+        },
+      }
+      break
+
+    case Phase.Combat:
+      // Go to Main 2.
+      games[gameId] = {
+        ...game,
+        turn: {
+          ...game.turn,
+          phase: Phase.Main2,
+        },
+      }
+      break
+
+    case Phase.Main2:
+      // Go back to Main 1.
+      games[gameId] = {
+        ...game,
+        players: [
+          ...game.players.filter(player => player.id !== playerId),
+          {
+            ...player,
+            battlefield: player.battlefield.map(card => ({
+              ...card,
+              isTapped: false,
+              hasSummoningSickness: false,
+            })),
+            hand: getSortedCards([...player.hand, player.library[0]]),
+            library: player.library.slice(1),
+            manaPool: {},
+          },
+        ],
+        turn: {
+          ...game.turn,
+          manaWasPlayed: false,
+          phase: Phase.Main1,
+        },
+      }
+      break
   }
 
   return games[gameId]
@@ -127,6 +157,8 @@ export const createGame = (request: Request, response: Response): void => {
         graveyard: [],
         hand: getSortedCards(unsortedHand),
         library,
+
+        life: 20,
         manaPool: {},
       },
     ],
@@ -160,6 +192,15 @@ export const playCard = (
   const manaIsEnough =
     !card.manaCost || getManaIsEnough(card.manaCost, player.manaPool)
   if (!manaIsEnough) throw new Error('Not enough mana')
+
+  const cardIsInstant = card.type.main === 'Instant'
+  if (!cardIsInstant) {
+    if (playerId !== game.turn.playerId)
+      throw new Error('You can play this on your turn only')
+
+    const phaseIsValid = [Phase.Main1, Phase.Main2].includes(game.turn.phase)
+    if (!phaseIsValid) throw new Error('You can play this in a Main phase only')
+  }
 
   games[gameId] = {
     ...game,

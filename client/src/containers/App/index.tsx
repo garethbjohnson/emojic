@@ -169,7 +169,7 @@ export const App: React.FC = () => {
                 {game.turn.playerId === player!.id
                   ? 'Your turn'
                   : "Opponent's turn"}{' '}
-                ({getPhaseDisplay(game.turn.phase)} phase)
+                ({getPhaseDisplay(game.turn.phase)})
               </h2>{' '}
               <h3>
                 Mana pool:{' '}
@@ -179,9 +179,7 @@ export const App: React.FC = () => {
                   'Empty'
                 )}
               </h3>
-              <button onClick={() => continueTurn(player!.id)}>
-                Next turn
-              </button>
+              <button onClick={() => continueTurn(player!.id)}>Continue</button>
             </Toolbar>
           </HandWrap>
         </>

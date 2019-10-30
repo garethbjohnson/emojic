@@ -131,7 +131,7 @@ export const Table = styled.div`
   margin-top: -64px;
   position: absolute;
   top: 0;
-  transform: perspective(64rem) rotateX(30deg) scale(0.75);
+  transform: perspective(128rem) rotateX(30deg) scale(0.75);
   transform-style: preserve-3d;
   width: 100%;
   z-index: 1;

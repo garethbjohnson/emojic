@@ -57,9 +57,9 @@ export const getEffectGetManaDisplay = (manaAmount: ManaAmount): string =>
 export const getPhaseDisplay = (phase: Phase): string =>
   ({
     [Phase.Upkeep]: 'Upkeep',
-    [Phase.Main1]: 'Main',
+    [Phase.Main1]: 'Main 1',
     [Phase.Combat]: 'Combat',
-    [Phase.Main2]: 'Main',
+    [Phase.Main2]: 'Main 2',
     [Phase.End]: 'End',
   }[phase])
 
