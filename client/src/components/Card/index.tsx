@@ -15,6 +15,7 @@ import {
   Main,
   ManaCost,
   PowerToughness,
+  StatusIcons,
   Type,
   Wrap,
 } from './style'
@@ -28,6 +29,7 @@ interface Props {
 export const Card: React.FC<Props> = ({
   activateAbility,
   card: {
+    hasSummoningSickness,
     isTapped,
     name,
     manaCost,
@@ -43,6 +45,8 @@ export const Card: React.FC<Props> = ({
       {manaCost && <ManaCost>{getManaAmountDisplay(manaCost)}</ManaCost>}
 
       <Image>{name}</Image>
+
+      <StatusIcons>{hasSummoningSickness && <span>🤢</span>}</StatusIcons>
 
       <Type>{getCardTypeDisplay(type)}</Type>
 

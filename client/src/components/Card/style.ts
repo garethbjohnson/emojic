@@ -85,6 +85,15 @@ export const PowerToughness = styled.div`
   right: 4px;
 `
 
+export const StatusIcons = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 2rem;
+  position: absolute;
+  left: 16px;
+  top: 16px;
+`
+
 export const Type = styled.div`
   background-color: whitesmoke;
   border-radius: 2px;

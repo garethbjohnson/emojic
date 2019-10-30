@@ -171,7 +171,13 @@ export const playCard = (
       ...game.playerAreas.filter(area => area.playerId !== playerId),
       {
         ...playerArea,
-        battlefield: getSortedCards([...playerArea.battlefield, card]),
+        battlefield: getSortedCards([
+          ...playerArea.battlefield,
+          {
+            ...card,
+            hasSummoningSickness: card.type.main === 'Creature' ? true : false,
+          },
+        ]),
         hand: playerArea.hand.filter(card => card.id !== cardId),
         manaPool: card.manaCost
           ? getManaMinusCost(playerArea.manaPool, card.manaCost)
