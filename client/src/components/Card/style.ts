@@ -35,6 +35,7 @@ export const Image = styled.h3`
   height: 140px;
   justify-content: center;
   margin: 0;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 `
 
 export const Main = styled.div<{ isTapped?: boolean }>`

@@ -31,9 +31,16 @@ export const Hand = styled.div<{ cardCount: number }>`
   > * {
     box-sizing: border-box;
     cursor: pointer;
-    margin: 8px;
     max-width: calc(100% / ${props => props.cardCount});
     transition: transform 0.2s;
+
+    & + * {
+      margin-left: -16px;
+    }
+
+    &:last-child {
+      max-width: unset;
+    }
 
     > * {
       box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
