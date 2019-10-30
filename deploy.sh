@@ -1,3 +1,11 @@
 #!/bin/bash
 
-cd shared && yarn build && cd ../server && yarn start
+yarn
+
+cd shared
+yarn
+yarn build
+
+cd ../server
+yarn
+yarn start
