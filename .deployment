@@ -1,2 +1,0 @@
-[config]
-command = cd shared && yarn build && cd ../server && yarn start
