@@ -18,6 +18,7 @@ dotenv.config()
 const app = express()
 app.use(express.json())
 app.use(cors())
+app.use(express.static(`${__dirname}/client`))
 
 const httpServer = new http.Server(app)
 
@@ -27,10 +28,10 @@ const port = process.env.PORT || 3000
 
 app.post('/api/games', createGame)
 
-socket.on('connection', webSocket => {
-  webSocket.on('close', () => console.log('close'))
+socket.on('connection', connectedSocket => {
+  connectedSocket.on('close', () => console.log('close'))
 
-  webSocket.on('message', (requestMessage: string) => {
+  connectedSocket.on('message', (requestMessage: string) => {
     let move: Move
 
     try {
@@ -59,7 +60,7 @@ socket.on('connection', webSocket => {
         }
 
         responseMessage = JSON.stringify(response)
-        webSocket.send(responseMessage)
+        connectedSocket.send(responseMessage)
         return
 
       case MoveType.CONTINUE_TURN:
@@ -71,7 +72,7 @@ socket.on('connection', webSocket => {
         }
 
         responseMessage = JSON.stringify(response)
-        webSocket.send(responseMessage)
+        connectedSocket.send(responseMessage)
         return
 
       case MoveType.PLAY_CARD:
@@ -83,7 +84,7 @@ socket.on('connection', webSocket => {
         }
 
         responseMessage = JSON.stringify(response)
-        webSocket.send(responseMessage)
+        connectedSocket.send(responseMessage)
         return
 
       default:

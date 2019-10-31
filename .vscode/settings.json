@@ -1,0 +1,5 @@
+{
+  "appService.showBuildDuringDeployPrompt": false,
+  "appService.defaultWebAppToDeploy": "/subscriptions/b9196e21-63d4-4966-842a-797c5f1d4a16/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/emojic12",
+  "appService.deploySubpath": "build"
+}

@@ -4,8 +4,9 @@
   "description": "Emoji card game server",
   "main": "src/index.ts",
   "scripts": {
-    "start": "tsc && nodemon dist/index.js",
-    "test": "tsc && jest dist"
+    "build": "tsc",
+    "start": "yarn build && nodemon dist/index.js",
+    "test": "yarn build && jest dist"
   },
   "dependencies": {
     "cors": "^2.8.5",
