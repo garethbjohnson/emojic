@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import getSocket from 'socket.io-client'
 
 import {
   MoveActivateAbility,
@@ -33,42 +34,46 @@ import {
   ManaWrap,
 } from './style'
 
-let webSocket: WebSocket
+let socket: SocketIOClient.Socket
 
 const activateAbility = (
+  gameId: string,
   playerId: string,
   cardId: string,
   attributeIndex: number
 ) => {
   const move: MoveActivateAbility = {
+    gameId,
     playerId,
     type: MoveType.ACTIVATE_ABILITY,
     data: { attributeIndex, cardId },
   }
 
   const message = JSON.stringify(move)
-  webSocket.send(message)
+  socket.send(message)
 }
 
-const continueTurn = (playerId: string) => {
+const continueTurn = (gameId: string, playerId: string) => {
   const move: MoveContinueTurn = {
+    gameId,
     playerId,
     type: MoveType.CONTINUE_TURN,
   }
 
   const message = JSON.stringify(move)
-  webSocket.send(message)
+  socket.send(message)
 }
 
-const playCard = (playerId: string, cardId: string) => {
+const playCard = (gameId: string, playerId: string, cardId: string) => {
   const move: MovePlayCard = {
+    gameId,
     playerId,
     type: MoveType.PLAY_CARD,
     data: { cardId },
   }
 
   const message = JSON.stringify(move)
-  webSocket.send(message)
+  socket.send(message)
 }
 
 export const App: React.FC = () => {
@@ -86,11 +91,9 @@ export const App: React.FC = () => {
   React.useEffect(() => {
     if (!game) return
 
-    webSocket = new WebSocket(`${WEB_SOCKET_API_URL}/games/${game.id}`)
+    socket = getSocket(WEB_SOCKET_API_URL, { transports: ['websocket'] })
 
-    webSocket.addEventListener('message', (event: MessageEvent) => {
-      const message: string = event.data
-
+    socket.on('message', (message: string) => {
       const response: Response = JSON.parse(message)
 
       if (response.status === 'FAILURE') alert(response.message)
@@ -116,7 +119,12 @@ export const App: React.FC = () => {
                   .map(card => (
                     <Card
                       activateAbility={(attributeIndex: number) =>
-                        activateAbility(player!.id, card.id, attributeIndex)
+                        activateAbility(
+                          game.id,
+                          player!.id,
+                          card.id,
+                          attributeIndex
+                        )
                       }
                       card={card}
                       key={card.id}
@@ -129,6 +137,7 @@ export const App: React.FC = () => {
                 {player!.library.map((card, index) => (
                   <LibraryCardWrap
                     index={index}
+                    key={index}
                     totalCount={player!.library.length}
                   >
                     <Card card={card} key={card.id} />
@@ -143,7 +152,12 @@ export const App: React.FC = () => {
                     .map(card => (
                       <Card
                         activateAbility={(attributeIndex: number) =>
-                          activateAbility(player!.id, card.id, attributeIndex)
+                          activateAbility(
+                            game.id,
+                            player!.id,
+                            card.id,
+                            attributeIndex
+                          )
                         }
                         card={card}
                         key={card.id}
@@ -159,7 +173,7 @@ export const App: React.FC = () => {
                 <Card
                   card={card}
                   key={card.id}
-                  onClick={() => playCard(player!.id, card.id)}
+                  onClick={() => playCard(game.id, player!.id, card.id)}
                 />
               ))}
             </Hand>
@@ -179,7 +193,9 @@ export const App: React.FC = () => {
                   'Empty'
                 )}
               </h3>
-              <button onClick={() => continueTurn(player!.id)}>Continue</button>
+              <button onClick={() => continueTurn(game.id, player!.id)}>
+                Continue
+              </button>
             </Toolbar>
           </HandWrap>
         </>

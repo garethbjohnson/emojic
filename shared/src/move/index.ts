@@ -5,6 +5,8 @@ export enum MoveType {
 }
 
 interface MoveBase {
+  // TODO: add some sort of security key maybe.
+  gameId: string
   playerId: string
   type: MoveType
 }

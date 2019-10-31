@@ -1,8 +1,8 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
-import express, { Request } from 'express'
-import withWebSockets from 'express-ws'
-import WebSocket from 'ws'
+import express from 'express'
+import http from 'http'
+import socketIo from 'socket.io'
 
 import { Game, Move, MoveType, Response } from 'emojic-shared'
 
@@ -15,18 +15,20 @@ import {
 
 dotenv.config()
 
-const baseApp = express()
-baseApp.use(express.json())
-baseApp.use(cors())
+const app = express()
+app.use(express.json())
+app.use(cors())
 
-const { app } = withWebSockets(baseApp)
+const httpServer = new http.Server(app)
+
+const socket = socketIo(httpServer)
 
 const port = process.env.PORT || 3000
 
 app.post('/api/games', createGame)
 
-app.ws('/api/games/:gameId', (webSocket: WebSocket, request: Request) => {
-  webSocket.on('close', () => console.log(request.params.gameId, 'close'))
+socket.on('connection', webSocket => {
+  webSocket.on('close', () => console.log('close'))
 
   webSocket.on('message', (requestMessage: string) => {
     let move: Move
@@ -46,7 +48,7 @@ app.ws('/api/games/:gameId', (webSocket: WebSocket, request: Request) => {
       case MoveType.ACTIVATE_ABILITY:
         try {
           playerGame = activateAbility(
-            request.params.gameId,
+            move.gameId,
             move.playerId,
             move.data.cardId,
             move.data.attributeIndex
@@ -62,7 +64,7 @@ app.ws('/api/games/:gameId', (webSocket: WebSocket, request: Request) => {
 
       case MoveType.CONTINUE_TURN:
         try {
-          playerGame = continueTurn(request.params.gameId, move.playerId)
+          playerGame = continueTurn(move.gameId, move.playerId)
           response = { status: 'SUCCESS', game: playerGame }
         } catch (error) {
           response = { status: 'FAILURE', message: error.message }
@@ -74,11 +76,7 @@ app.ws('/api/games/:gameId', (webSocket: WebSocket, request: Request) => {
 
       case MoveType.PLAY_CARD:
         try {
-          playerGame = playCard(
-            request.params.gameId,
-            move.playerId,
-            move.data.cardId
-          )
+          playerGame = playCard(move.gameId, move.playerId, move.data.cardId)
           response = { status: 'SUCCESS', game: playerGame }
         } catch (error) {
           response = { status: 'FAILURE', message: error.message }
@@ -92,12 +90,8 @@ app.ws('/api/games/:gameId', (webSocket: WebSocket, request: Request) => {
         return
     }
   })
-
-  webSocket.on('open', () => console.log(request.params.gameId, 'open'))
-
-  console.log('socket')
 })
 
-app.listen(port || 3000, () =>
+httpServer.listen(port || 3000, () =>
   console.log(`Running at \`http://localhost:${port}\`...`)
 )
