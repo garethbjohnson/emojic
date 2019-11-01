@@ -4,16 +4,16 @@ export const MainBattlefield = styled.div`
   align-content: center;
   align-items: center;
   display: flex;
-  height: 320px;
+  height: 20rem;
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: 2rem;
 
   > * {
     flex-shrink: 0;
-    margin: 8px;
+    margin: 0.5rem;
 
     > * {
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.1);
     }
   }
 `
@@ -35,7 +35,7 @@ export const Hand = styled.div<{ cardCount: number }>`
     transition: transform 0.2s;
 
     & + * {
-      margin-left: -16px;
+      margin-left: -1rem;
     }
 
     &:last-child {
@@ -43,16 +43,16 @@ export const Hand = styled.div<{ cardCount: number }>`
     }
 
     > * {
-      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0.125rem 0.1875rem rgba(0, 0, 0, 0.1);
       transition: box-shadow 0.2s;
     }
 
     &:hover {
-      transform: translateY(-8px);
+      transform: translateY(-0.5rem);
       z-index: 1;
 
       > * {
-        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0.5rem 0.753rem rgba(0, 0, 0, 0.1);
       }
     }
   }
@@ -71,32 +71,34 @@ export const LibraryCardWrap = styled.div<{
   totalCount: number
 }>`
   position: absolute !important;
-  transform: translateZ(${props => 2 * (props.totalCount - props.index)}px);
+  transform: translateZ(
+    ${props => 0.125 * (props.totalCount - props.index)}rem
+  );
   transform-style: preserve-3d;
   z-index: ${props => props.totalCount - props.index};
 
   &:last-child {
-    height: 320px;
+    height: 20rem;
   }
 
   > * {
     transform: rotateY(180deg);
 
     > * {
-      box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0, 0, 0, 0.1);
     }
   }
 `
 
 export const LibraryWrap = styled.div`
   flex-shrink: 0;
-  margin-right: 16px;
-  width: 240px;
+  margin-right: 1rem;
+  width: 15rem;
 `
 
 export const LibraryManaWrap = styled.div`
   display: flex;
-  height: 320px;
+  height: 20rem;
   z-index: 2;
 `
 
@@ -108,27 +110,27 @@ export const ManaWrap = styled.div`
     flex-shrink: 1;
 
     & + * {
-      margin-left: 16px;
+      margin-left: 1rem;
     }
 
     > * {
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.1);
     }
   }
 `
 
 export const ManaPool = styled.span`
-  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 0.125rem 0.1875rem rgba(0, 0, 0, 0.2);
 `
 
 export const Table = styled.div`
   align-content: center;
   display: flex;
   flex-direction: column;
-  height: calc(100% - 300px);
+  height: calc(100% - 18.75rem);
   justify-content: center;
   left: 0;
-  margin-top: -64px;
+  margin-top: -4rem;
   position: absolute;
   top: 0;
   transform: perspective(128rem) rotateX(30deg) scale(0.75);
@@ -144,7 +146,7 @@ export const Toolbar = styled.div`
   justify-content: center;
 
   > * + * {
-    margin-left: 16px;
+    margin-left: 1rem;
   }
 `
 

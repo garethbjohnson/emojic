@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 
-const cardHeight = '320px'
-const cardWidth = '240px'
+const cardHeight = '20rem'
+const cardWidth = '15rem'
 
 export const Attribute = styled.li<{ onClick?: Function }>`
   ${props =>
@@ -18,46 +18,46 @@ export const Attribute = styled.li<{ onClick?: Function }>`
 
 export const Attributes = styled.ul`
   background-color: whitesmoke;
-  border-radius: 2px;
+  border-radius: 0.125rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   justify-content: center;
   list-style: none;
   margin: 0;
-  padding: 8px;
+  padding: 0.5rem;
 `
 
 export const Image = styled.h3`
   align-items: center;
   display: flex;
   font-size: 6rem;
-  height: 140px;
+  height: 8.75rem;
   justify-content: center;
   margin: 0;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.5);
 `
 
 export const Main = styled.div<{ isTapped?: boolean; onClick?: Function }>`
   backface-visibility: hidden;
   background-color: white;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   box-sizing: border-box;
   ${props => props.onClick && 'cursor: pointer;'}
   display: flex;
   flex-direction: column;
-  height: 320px;
+  height: 20rem;
   margin: auto;
-  padding: 12px;
+  padding: 0.75rem;
   position: relative;
   ${props => props.isTapped && 'transform: rotateZ(90deg);'}
   transition: transform 0.5s;
   user-select: none;
-  width: 240px;
+  width: 15rem;
   z-index: 2;
 
   > * + * {
-    margin-top: 4px;
+    margin-top: 0.25rem;
   }
 `
 
@@ -70,20 +70,20 @@ export const Back = styled(Main)`
 `
 
 export const ManaCost = styled.div`
-  padding: 4px;
+  padding: 0.25rem;
   position: absolute;
-  right: 4px;
-  top: 4px;
+  right: 0.25rem;
+  top: 0.25rem;
 `
 
 export const PowerToughness = styled.div`
   background-color: whitesmoke;
-  border: 4px solid white;
-  border-radius: 2px;
-  bottom: 4px;
-  padding: 8px;
+  border: 0.25rem solid white;
+  border-radius: 0.125rem;
+  bottom: 0.25rem;
+  padding: 0.5rem;
   position: absolute;
-  right: 4px;
+  right: 0.25rem;
 `
 
 export const StatusIcons = styled.div`
@@ -91,21 +91,21 @@ export const StatusIcons = styled.div`
   flex-direction: column;
   font-size: 2rem;
   position: absolute;
-  left: 16px;
-  top: 16px;
+  left: 1rem;
+  top: 1rem;
 `
 
 export const Type = styled.div`
   background-color: whitesmoke;
-  border-radius: 2px;
+  border-radius: 0.125rem;
   flex-grow: 0;
-  padding: 8px;
+  padding: 0.5rem;
 `
 
 export const Wrap = styled.div<{ isAttacking?: boolean; isTapped?: boolean }>`
   position: relative;
   width: ${props => (props.isTapped ? cardHeight : cardWidth)};
-  ${props => props.isAttacking && 'transform: translateY(-96px);'}
+  ${props => props.isAttacking && 'transform: translateY(-6rem);'}
   transform-origin: center;
   transform-style: preserve-3d;
   transition: transform 0.5s, width 0.2s;
