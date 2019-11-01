@@ -11,6 +11,7 @@ import {
   continueTurn,
   createGame,
   playCard,
+  setAttacker,
 } from './game/controllers'
 
 dotenv.config()
@@ -78,6 +79,18 @@ socket.on('connection', connectedSocket => {
       case MoveType.PLAY_CARD:
         try {
           playerGame = playCard(move.gameId, move.playerId, move.data.cardId)
+          response = { status: 'SUCCESS', game: playerGame }
+        } catch (error) {
+          response = { status: 'FAILURE', message: error.message }
+        }
+
+        responseMessage = JSON.stringify(response)
+        connectedSocket.send(responseMessage)
+        return
+
+      case MoveType.SET_ATTACKER:
+        try {
+          playerGame = setAttacker(move.gameId, move.playerId, move.data.cardId)
           response = { status: 'SUCCESS', game: playerGame }
         } catch (error) {
           response = { status: 'FAILURE', message: error.message }

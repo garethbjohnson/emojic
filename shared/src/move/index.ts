@@ -2,6 +2,7 @@ export enum MoveType {
   ACTIVATE_ABILITY = 'ACTIVATE_ABILITY',
   CONTINUE_TURN = 'CONTINUE_TURN',
   PLAY_CARD = 'PLAY_CARD',
+  SET_ATTACKER = 'SET_ATTACKER',
 }
 
 interface MoveBase {
@@ -28,4 +29,13 @@ export interface MovePlayCard extends MoveBase {
   data: { cardId: string }
 }
 
-export type Move = MoveActivateAbility | MoveContinueTurn | MovePlayCard
+export interface MoveSetAttacker extends MoveBase {
+  type: MoveType.SET_ATTACKER
+  data: { cardId: string }
+}
+
+export type Move =
+  | MoveActivateAbility
+  | MoveContinueTurn
+  | MovePlayCard
+  | MoveSetAttacker

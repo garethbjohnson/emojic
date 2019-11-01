@@ -9,6 +9,8 @@ import {
   MoveType,
   Response,
   getManaAmountDisplay,
+  MoveSetAttacker,
+  Phase,
 } from 'emojic-shared'
 
 import { Card } from '../../components/Card'
@@ -76,6 +78,18 @@ const playCard = (gameId: string, playerId: string, cardId: string) => {
   socket.send(message)
 }
 
+const setAttacker = (gameId: string, playerId: string, cardId: string) => {
+  const move: MoveSetAttacker = {
+    gameId,
+    playerId,
+    type: MoveType.SET_ATTACKER,
+    data: { cardId },
+  }
+
+  const message = JSON.stringify(move)
+  socket.send(message)
+}
+
 export const App: React.FC = () => {
   const dispatch = useDispatch()
 
@@ -83,6 +97,7 @@ export const App: React.FC = () => {
   const playerId = useSelector(selectPlayerId)
 
   const player = game && game.players.find(player => player.id === playerId)
+  const opponent = game && game.players.find(player => player.id !== playerId)
 
   React.useEffect(() => {
     createGame(dispatch, playerId!)
@@ -128,6 +143,15 @@ export const App: React.FC = () => {
                       }
                       card={card}
                       key={card.id}
+                      onClick={
+                        game.turn.playerId === playerId &&
+                        game.turn.phase === Phase.Combat &&
+                        card.type.main === 'Creature' &&
+                        !card.isTapped &&
+                        !card.hasSummoningSickness
+                          ? () => setAttacker(game.id, playerId, card.id)
+                          : undefined
+                      }
                     />
                   ))}
             </MainBattlefield>
@@ -193,6 +217,7 @@ export const App: React.FC = () => {
                   'Empty'
                 )}
               </h3>
+              <h2>Opponent's life: {opponent!.life}</h2>
               <button onClick={() => continueTurn(game.id, player!.id)}>
                 Continue
               </button>

@@ -88,15 +88,41 @@ export const continueTurn = (gameId: string, playerId: string): Game => {
       }
       break
 
+    // TODO: better combat handling (blocking, etc.)
     case Phase.Combat:
-      // Go to Main 2.
+      const attackingCreatures = player.battlefield.filter(
+        card => card.isAttacking
+      )
+
+      const combatDamage = attackingCreatures.reduce(
+        (damageSoFar, card) => damageSoFar + card.basePower,
+        0
+      )
+
+      const opponent = game.players.find(player => player.id !== playerId)
+      const opponentLife = opponent.life - combatDamage
+
       games[gameId] = {
         ...game,
+        players: [
+          { ...opponent, life: opponentLife },
+          {
+            ...player,
+            battlefield: player.battlefield.map(card => ({
+              ...card,
+              isAttacking: false,
+            })),
+          },
+        ],
         turn: {
           ...game.turn,
           phase: Phase.Main2,
         },
       }
+
+      // TODO: handle winning better
+      if (opponentLife <= 0) throw new Error('🎉 YOU WIN 🎉')
+
       break
 
     case Phase.Main2:
@@ -131,7 +157,7 @@ export const continueTurn = (gameId: string, playerId: string): Game => {
 
 export const createGame = (request: Request, response: Response): void => {
   // TODO: authenticate the player.
-  // TODO: pair the player with another player.
+  // TODO: pair the player with a real user.
   // TODO: let the player play against AI.
   console.log('request.body:', request.body)
   const { playerId } = request.body
@@ -143,25 +169,25 @@ export const createGame = (request: Request, response: Response): void => {
   const unsortedHand = fullLibrary.slice(0, 7)
   const library = fullLibrary.slice(7)
 
+  const player: Player = {
+    id: playerId,
+
+    battlefield: [],
+    exile: [],
+    graveyard: [],
+    hand: getSortedCards(unsortedHand),
+    library,
+
+    life: 20,
+    manaPool: {},
+  }
+
   // TODO: randomise starting player.
   // TODO: allow mulligans.
   const game: Game = {
     id: makeId(),
 
-    players: [
-      {
-        id: playerId,
-
-        battlefield: [],
-        exile: [],
-        graveyard: [],
-        hand: getSortedCards(unsortedHand),
-        library,
-
-        life: 20,
-        manaPool: {},
-      },
-    ],
+    players: [player, { ...player, id: makeId() }],
     turn: {
       playerId,
       phase: Phase.Main1,
@@ -184,7 +210,7 @@ export const playCard = (
   const { game, player } = validateMoveBasics(gameId, playerId)
 
   const card = player.hand.find(card => card.id === cardId)
-  if (!card) throw new Error('Card not found')
+  if (!card) throw new Error('Card not found in hand')
 
   if (card.type.main === 'Mana' && game.turn.manaWasPlayed)
     throw new Error('Cannot play more than one mana per turn')
@@ -225,6 +251,47 @@ export const playCard = (
       ...game.turn,
       manaWasPlayed: card.type.main === 'Mana' ? true : game.turn.manaWasPlayed,
     },
+  }
+
+  return getPlayerGame(games[gameId], playerId)
+}
+
+export const setAttacker = (
+  gameId: string,
+  playerId: string,
+  cardId: string
+): Game => {
+  const { game, player } = validateMoveBasics(gameId, playerId)
+
+  const card = player.battlefield.find(card => card.id === cardId)
+  if (!card) throw new Error('Card not found in battlefield')
+
+  if (card.type.main !== 'Creature')
+    throw new Error('Can only attack with creatures')
+
+  if (game.turn.phase !== Phase.Combat)
+    throw new Error('You can attack in a Combat phase only')
+
+  if (card.hasSummoningSickness)
+    throw new Error('Creature has summoning sickness')
+
+  games[gameId] = {
+    ...game,
+    players: [
+      ...game.players.filter(player => player.id !== playerId),
+      {
+        ...player,
+        battlefield: player.battlefield.map(card =>
+          card.id === cardId
+            ? {
+                ...card,
+                isAttacking: true,
+                isTapped: true,
+              }
+            : card
+        ),
+      },
+    ],
   }
 
   return getPlayerGame(games[gameId], playerId)

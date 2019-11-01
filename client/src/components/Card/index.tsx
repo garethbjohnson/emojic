@@ -25,18 +25,19 @@ interface Props {
 export const Card: React.FC<Props> = ({
   activateAbility,
   card: {
-    hasSummoningSickness,
-    isTapped,
-    name,
-    manaCost,
-    type,
     attributes,
     basePower,
     baseToughness,
+    hasSummoningSickness,
+    isAttacking,
+    isTapped,
+    manaCost,
+    name,
+    type,
   },
   onClick,
 }) => (
-  <Wrap isTapped={isTapped}>
+  <Wrap isAttacking={isAttacking} isTapped={isTapped}>
     <Main isTapped={isTapped} onClick={onClick}>
       {manaCost && <ManaCost>{getManaAmountDisplay(manaCost)}</ManaCost>}
 

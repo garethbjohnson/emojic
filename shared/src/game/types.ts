@@ -12,6 +12,7 @@ export interface GameCard extends Card {
   id: string
 
   hasSummoningSickness?: boolean
+  isAttacking?: boolean
   isTapped?: boolean
 }
 

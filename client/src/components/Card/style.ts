@@ -38,11 +38,12 @@ export const Image = styled.h3`
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 `
 
-export const Main = styled.div<{ isTapped?: boolean }>`
+export const Main = styled.div<{ isTapped?: boolean; onClick?: Function }>`
   backface-visibility: hidden;
   background-color: white;
   border-radius: 8px;
   box-sizing: border-box;
+  ${props => props.onClick && 'cursor: pointer;'}
   display: flex;
   flex-direction: column;
   height: 320px;
@@ -101,10 +102,11 @@ export const Type = styled.div`
   padding: 8px;
 `
 
-export const Wrap = styled.div<{ isTapped?: boolean }>`
+export const Wrap = styled.div<{ isAttacking?: boolean; isTapped?: boolean }>`
   position: relative;
   width: ${props => (props.isTapped ? cardHeight : cardWidth)};
+  ${props => props.isAttacking && 'transform: translateY(-96px);'}
   transform-origin: center;
   transform-style: preserve-3d;
-  transition: width 0.2s;
+  transition: transform 0.5s, width 0.2s;
 `
