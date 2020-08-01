@@ -5,8 +5,8 @@ import {
   Game,
   Phase,
   Player,
-  blackBlueDeck,
   makeId,
+  rainbowDeck,
 } from 'emojic-shared'
 
 import {
@@ -25,11 +25,11 @@ export const activateAbility = (
   gameId: string,
   playerId: string,
   cardId: string,
-  attributeIndex: number
+  attributeIndex: number,
 ): Game => {
   const { game, player } = validateMoveBasics(gameId, playerId)
 
-  const card = player.battlefield.find(card => card.id === cardId)
+  const card = player.battlefield.find((card) => card.id === cardId)
   if (!card) throw new Error('Card not found')
 
   const attribute = card.attributes[attributeIndex]
@@ -50,12 +50,12 @@ export const activateAbility = (
     games[gameId] = {
       ...game,
       players: [
-        ...game.players.filter(player => player.id !== playerId),
+        ...game.players.filter((player) => player.id !== playerId),
         {
           ...player,
           battlefield: ability.cost.tap
-            ? player.battlefield.map(card =>
-                card.id === cardId ? { ...card, isTapped: true } : card
+            ? player.battlefield.map((card) =>
+                card.id === cardId ? { ...card, isTapped: true } : card,
               )
             : player.battlefield,
           manaPool: getManaPlusAddition(player.manaPool, ability.effect.amount),
@@ -91,15 +91,15 @@ export const continueTurn = (gameId: string, playerId: string): Game => {
     // TODO: better combat handling (blocking, etc.)
     case Phase.Combat:
       const attackingCreatures = player.battlefield.filter(
-        card => card.isAttacking
+        (card) => card.isAttacking,
       )
 
       const combatDamage = attackingCreatures.reduce(
         (damageSoFar, card) => damageSoFar + card.basePower,
-        0
+        0,
       )
 
-      const opponent = game.players.find(player => player.id !== playerId)
+      const opponent = game.players.find((player) => player.id !== playerId)
       const opponentLife = opponent.life - combatDamage
 
       games[gameId] = {
@@ -108,7 +108,7 @@ export const continueTurn = (gameId: string, playerId: string): Game => {
           { ...opponent, life: opponentLife },
           {
             ...player,
-            battlefield: player.battlefield.map(card => ({
+            battlefield: player.battlefield.map((card) => ({
               ...card,
               isAttacking: false,
             })),
@@ -130,10 +130,10 @@ export const continueTurn = (gameId: string, playerId: string): Game => {
       games[gameId] = {
         ...game,
         players: [
-          ...game.players.filter(player => player.id !== playerId),
+          ...game.players.filter((player) => player.id !== playerId),
           {
             ...player,
-            battlefield: player.battlefield.map(card => ({
+            battlefield: player.battlefield.map((card) => ({
               ...card,
               isTapped: false,
               hasSummoningSickness: false,
@@ -163,7 +163,7 @@ export const createGame = (request: Request, response: Response): void => {
   const { playerId } = request.body
 
   // TODO: let the player choose a deck.
-  const unshuffledLibrary = blackBlueDeck.map(makeGameCard)
+  const unshuffledLibrary = rainbowDeck.map(makeGameCard)
   const fullLibrary = getShuffled(unshuffledLibrary)
 
   const unsortedHand = fullLibrary.slice(0, 7)
@@ -205,11 +205,11 @@ export const createGame = (request: Request, response: Response): void => {
 export const playCard = (
   gameId: string,
   playerId: string,
-  cardId: string
+  cardId: string,
 ): Game => {
   const { game, player } = validateMoveBasics(gameId, playerId)
 
-  const card = player.hand.find(card => card.id === cardId)
+  const card = player.hand.find((card) => card.id === cardId)
   if (!card) throw new Error('Card not found in hand')
 
   if (card.type.main === 'Mana' && game.turn.manaWasPlayed)
@@ -231,7 +231,7 @@ export const playCard = (
   games[gameId] = {
     ...game,
     players: [
-      ...game.players.filter(player => player.id !== playerId),
+      ...game.players.filter((player) => player.id !== playerId),
       {
         ...player,
         battlefield: getSortedCards([
@@ -241,7 +241,7 @@ export const playCard = (
             hasSummoningSickness: card.type.main === 'Creature' ? true : false,
           },
         ]),
-        hand: player.hand.filter(card => card.id !== cardId),
+        hand: player.hand.filter((card) => card.id !== cardId),
         manaPool: card.manaCost
           ? getManaMinusCost(player.manaPool, card.manaCost)
           : player.manaPool,
@@ -259,11 +259,11 @@ export const playCard = (
 export const setAttacker = (
   gameId: string,
   playerId: string,
-  cardId: string
+  cardId: string,
 ): Game => {
   const { game, player } = validateMoveBasics(gameId, playerId)
 
-  const card = player.battlefield.find(card => card.id === cardId)
+  const card = player.battlefield.find((card) => card.id === cardId)
   if (!card) throw new Error('Card not found in battlefield')
 
   if (card.type.main !== 'Creature')
@@ -278,17 +278,17 @@ export const setAttacker = (
   games[gameId] = {
     ...game,
     players: [
-      ...game.players.filter(player => player.id !== playerId),
+      ...game.players.filter((player) => player.id !== playerId),
       {
         ...player,
-        battlefield: player.battlefield.map(card =>
+        battlefield: player.battlefield.map((card) =>
           card.id === cardId
             ? {
                 ...card,
                 isAttacking: true,
                 isTapped: true,
               }
-            : card
+            : card,
         ),
       },
     ],
@@ -299,16 +299,16 @@ export const setAttacker = (
 
 export const validateMoveBasics = (
   gameId: string,
-  playerId: string
+  playerId: string,
 ): { game: Game; player: Player } => {
   const game = games[gameId]
   if (!game) throw new Error('Game not found')
 
-  const player = game.players.find(player => player.id === playerId)
+  const player = game.players.find((player) => player.id === playerId)
   if (!player) throw new Error('Player not found in game')
 
   const phaseIsValid = [Phase.Main1, Phase.Combat, Phase.Main2].includes(
-    game.turn.phase
+    game.turn.phase,
   )
   if (!phaseIsValid) throw new Error('Cannot play card this phase')
 

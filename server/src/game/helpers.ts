@@ -4,6 +4,7 @@ import {
   GameCard,
   ManaAmount,
   Player,
+  getColor,
   getConvertedManaCost,
   makeId,
 } from 'emojic-shared'
@@ -12,50 +13,12 @@ const colors = ['black', 'blue', 'green', 'red', 'white']
 const colorLessAndColors = ['colorless', ...colors]
 const colorLessAndColorsAndMulticolor = [...colorLessAndColors, 'multicolor']
 
-export const getColor = (
-  card: Card | GameCard
-):
-  | 'colorless'
-  | 'black'
-  | 'blue'
-  | 'black'
-  | 'green'
-  | 'red'
-  | 'white'
-  | 'multicolor' => {
-  // TODO: handle nonbasic lands.
-  if (card.type.main === 'Mana' && card.type.modifier === 'Basic') {
-    const manaAmount = card.attributes[0].effect.amount
-    if (manaAmount.black) return 'black'
-    if (manaAmount.blue) return 'blue'
-    if (manaAmount.green) return 'green'
-    if (manaAmount.red) return 'red'
-    if (manaAmount.white) return 'white'
-  }
-
-  const { manaCost } = card
-
-  if (!manaCost) return 'colorless'
-
-  const { colorless, black, blue, red, green, white } = manaCost
-
-  if (colorless && !black && !blue && !red && !green && !white)
-    return 'colorless'
-  if (!colorless && black && blue && !red && !green && !white) return 'black'
-  if (!colorless && !black && blue && !red && !green && !white) return 'blue'
-  if (!colorless && !black && !blue && red && !green && !white) return 'red'
-  if (!colorless && !black && !blue && !red && green && !white) return 'green'
-  if (!colorless && !black && !blue && !red && !green && white) return 'white'
-
-  return 'multicolor'
-}
-
 export const getHiddenCards = (cards: GameCard[]): GameCard[] =>
-  cards.map(_ => hiddenCard)
+  cards.map((_) => hiddenCard)
 
 export const getManaIsEnough = (
   cost: ManaAmount,
-  pool: ManaAmount
+  pool: ManaAmount,
 ): boolean => {
   try {
     getManaMinusCost(pool, cost)
@@ -68,7 +31,7 @@ export const getManaIsEnough = (
 
 export const getManaMinusCost = (
   pool: ManaAmount,
-  cost: ManaAmount
+  cost: ManaAmount,
 ): ManaAmount => {
   const newPool = { ...pool }
   const costLeft = { ...cost }
@@ -96,13 +59,13 @@ export const getManaMinusCost = (
 
 export const getManaPlusAddition = (
   pool: ManaAmount,
-  addition: ManaAmount
+  addition: ManaAmount,
 ): ManaAmount => {
   const newPool = { ...pool }
   ;['colorless', 'black', 'blue', 'green', 'red', 'white'].forEach(
     (color: keyof ManaAmount) => {
       if (addition[color]) newPool[color] = addition[color] + (pool[color] || 0)
-    }
+    },
   )
 
   return newPool
@@ -122,8 +85,8 @@ export const getOwnArea = (player: Player): Player => ({
 /** Get a game with cards hidden for the given player. */
 export const getPlayerGame = (game: Game, playerId: string): Game => ({
   ...game,
-  players: game.players.map(player =>
-    player.id === playerId ? getOwnArea(player) : getOpponentArea(player)
+  players: game.players.map((player) =>
+    player.id === playerId ? getOwnArea(player) : getOpponentArea(player),
   ),
 })
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { GameCard, getManaAmountDisplay } from 'emojic-shared'
+import { GameCard, getColor, getManaAmountDisplay } from 'emojic-shared'
 
 import { getCardTypeDisplay, getCardAttributeDisplay } from '../../helpers/card'
 import {
@@ -11,6 +11,7 @@ import {
   Main,
   ManaCost,
   PowerToughness,
+  PowerToughnessWrap,
   StatusIcons,
   Type,
   Wrap,
@@ -22,9 +23,8 @@ interface Props {
   onClick?: () => void
 }
 
-export const Card: React.FC<Props> = ({
-  activateAbility,
-  card: {
+export const Card: React.FC<Props> = ({ activateAbility, card, onClick }) => {
+  const {
     attributes,
     basePower,
     baseToughness,
@@ -34,42 +34,47 @@ export const Card: React.FC<Props> = ({
     manaCost,
     name,
     type,
-  },
-  onClick,
-}) => (
-  <Wrap isAttacking={isAttacking} isTapped={isTapped}>
-    <Main isTapped={isTapped} onClick={onClick}>
-      {manaCost && <ManaCost>{getManaAmountDisplay(manaCost)}</ManaCost>}
+  } = card
 
-      <Image>{name}</Image>
+  const color = getColor(card)
 
-      <StatusIcons>{hasSummoningSickness && <span>🤢</span>}</StatusIcons>
+  return (
+    <Wrap isAttacking={isAttacking} isTapped={isTapped}>
+      <Main color={color} isTapped={isTapped} onClick={onClick}>
+        {manaCost && <ManaCost>{getManaAmountDisplay(manaCost)}</ManaCost>}
 
-      <Type>{getCardTypeDisplay(type)}</Type>
+        <Image>{name}</Image>
 
-      <Attributes>
-        {attributes &&
-          attributes.map((attribute, index) => (
-            <Attribute
-              key={index}
-              onClick={
-                activateAbility && attribute.type === 'ActivatedAbility'
-                  ? () => activateAbility(index)
-                  : undefined
-              }
-            >
-              {getCardAttributeDisplay(attribute)}
-            </Attribute>
-          ))}
-      </Attributes>
+        <StatusIcons>{hasSummoningSickness && <span>🤢</span>}</StatusIcons>
 
-      {basePower && baseToughness && (
-        <PowerToughness>
-          {basePower} / {baseToughness}
-        </PowerToughness>
-      )}
-    </Main>
+        <Type>{getCardTypeDisplay(type)}</Type>
 
-    <Back isTapped={isTapped} />
-  </Wrap>
-)
+        <Attributes>
+          {attributes &&
+            attributes.map((attribute, index) => (
+              <Attribute
+                key={index}
+                onClick={
+                  activateAbility && attribute.type === 'ActivatedAbility'
+                    ? () => activateAbility(index)
+                    : undefined
+                }
+              >
+                {getCardAttributeDisplay(attribute)}
+              </Attribute>
+            ))}
+        </Attributes>
+
+        {basePower && baseToughness && (
+          <PowerToughnessWrap color={color}>
+            <PowerToughness>
+              {basePower} / {baseToughness}
+            </PowerToughness>
+          </PowerToughnessWrap>
+        )}
+      </Main>
+
+      <Back isTapped={isTapped} />
+    </Wrap>
+  )
+}

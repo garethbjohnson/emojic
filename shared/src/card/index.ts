@@ -1,4 +1,7 @@
 export * from './black'
 export * from './blue'
+export * from './green'
+export * from './red'
+export * from './white'
 export * from './helpers'
 export * from './types'

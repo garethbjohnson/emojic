@@ -22,18 +22,29 @@ export interface CardType {
   modifier?: 'Basic' | 'Legendary'
   main: 'Artifact' | 'Creature' | 'Enchantment' | 'Instant' | 'Mana' | 'Sorcery'
   subtypes?: (
+    | 'Angel'
     | 'Aura'
+    | 'Boar'
+    | 'Cat'
     | 'Demon'
+    | 'Dragon'
     | 'Elf'
+    | 'Frog'
     | 'Goblin'
     | 'Human'
     | 'Kraken'
+    | 'Lion'
+    | 'Lizard'
     | 'Merfolk'
+    | 'Ogre'
     | 'Owl'
+    | 'Rhino'
+    | 'Soldier'
     | 'Spider'
     | 'Vampire'
     | 'Wizard'
-    | 'Zombie')[]
+    | 'Zombie'
+  )[]
 }
 
 export type Effect = EffectGetMana

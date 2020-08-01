@@ -1,11 +1,6 @@
-import { Card, ManaAmount, getManaAmountDisplay } from 'emojic-shared'
+import { Card, ManaAmount, getColor, getManaAmountDisplay } from 'emojic-shared'
 
-import {
-  getManaMinusCost,
-  hiddenCard,
-  getSortedCards,
-  getColor,
-} from './helpers'
+import { getManaMinusCost, hiddenCard, getSortedCards } from './helpers'
 
 const getManaAmount = (string: string): ManaAmount => {
   const pattern = /^([0-9]*)[^0-9]*$/
@@ -101,16 +96,46 @@ describe('getSortedCards', () => {
     [[], []],
     [[cardG], [cardG]],
     [[manaG], [manaG]],
-    [[card1, cardG], [card1, cardG]],
-    [[cardG, card1], [card1, cardG]],
-    [[card1G, cardG], [cardG, card1G]],
-    [[card1G, cardG, cardGR], [cardG, card1G, cardGR]],
-    [[cardG, cardR, card1G], [cardG, card1G, cardR]],
-    [[manaG, manaR], [manaG, manaR]],
-    [[manaR, manaG], [manaG, manaR]],
-    [[manaG, card1], [manaG, card1]],
-    [[card1, manaG], [manaG, card1]],
-    [[card1, manaR, manaG], [manaG, manaR, card1]],
+    [
+      [card1, cardG],
+      [card1, cardG],
+    ],
+    [
+      [cardG, card1],
+      [card1, cardG],
+    ],
+    [
+      [card1G, cardG],
+      [cardG, card1G],
+    ],
+    [
+      [card1G, cardG, cardGR],
+      [cardG, card1G, cardGR],
+    ],
+    [
+      [cardG, cardR, card1G],
+      [cardG, card1G, cardR],
+    ],
+    [
+      [manaG, manaR],
+      [manaG, manaR],
+    ],
+    [
+      [manaR, manaG],
+      [manaG, manaR],
+    ],
+    [
+      [manaG, card1],
+      [manaG, card1],
+    ],
+    [
+      [card1, manaG],
+      [manaG, card1],
+    ],
+    [
+      [card1, manaR, manaG],
+      [manaG, manaR, card1],
+    ],
   ]
 
   const getCardsDisplay = (cards: Card[]) =>
@@ -119,14 +144,14 @@ describe('getSortedCards', () => {
       .map((card: Card) =>
         card.type.main === 'Mana'
           ? `${getColor(card)}-mana`
-          : (card.manaCost && getManaAmountDisplay(card.manaCost)) || 0
+          : (card.manaCost && getManaAmountDisplay(card.manaCost)) || 0,
       )
       .join(', ') +
     ']'
 
   for (const [cards, expectedResult] of testMap) {
     test(`${getCardsDisplay(cards)} sorts to ${getCardsDisplay(
-      expectedResult
+      expectedResult,
     )}`, () => {
       const result = getSortedCards<Card>(cards)
       expect(result).toEqual(expectedResult)
