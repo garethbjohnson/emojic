@@ -13,7 +13,7 @@ import {
   Phase,
 } from 'emojic-shared'
 
-import { Card } from '../../components/Card'
+import { Card, Title } from '../../components'
 import { getPhaseDisplay } from '../../helpers/card'
 import { WEB_SOCKET_API_URL } from '../../helpers/constants'
 import {
@@ -34,6 +34,7 @@ import {
   Wrap,
   LibraryWrap,
   ManaWrap,
+  StartButton,
 } from './style'
 
 let socket: SocketIOClient.Socket
@@ -42,7 +43,7 @@ const activateAbility = (
   gameId: string,
   playerId: string,
   cardId: string,
-  attributeIndex: number
+  attributeIndex: number,
 ) => {
   const move: MoveActivateAbility = {
     gameId,
@@ -96,12 +97,14 @@ export const App: React.FC = () => {
   const game = useSelector(selectGame)
   const playerId = useSelector(selectPlayerId)
 
-  const player = game && game.players.find(player => player.id === playerId)
-  const opponent = game && game.players.find(player => player.id !== playerId)
+  const [gameIsLoading, setGameIsLoading] = React.useState(false)
 
-  React.useEffect(() => {
-    createGame(dispatch, playerId!)
-  }, [])
+  const player = game && game.players.find((player) => player.id === playerId)
+  const opponent = game && game.players.find((player) => player.id !== playerId)
+
+  // React.useEffect(() => {
+  //   createGame(dispatch, playerId!)
+  // }, [])
 
   React.useEffect(() => {
     if (!game) return
@@ -122,7 +125,22 @@ export const App: React.FC = () => {
 
   return (
     <Wrap>
-      {!game && 'Loading...'}
+      {!game && !gameIsLoading && (
+        <Title>
+          <StartButton
+            onClick={() => {
+              setGameIsLoading(true)
+              createGame(dispatch, playerId!).then(() =>
+                setGameIsLoading(false),
+              )
+            }}
+          >
+            Play
+          </StartButton>
+        </Title>
+      )}
+
+      {gameIsLoading && 'Loading...'}
 
       {game && (
         <>
@@ -130,15 +148,15 @@ export const App: React.FC = () => {
             <MainBattlefield>
               {player!.battlefield &&
                 player!.battlefield
-                  .filter(card => card.type.main !== 'Mana')
-                  .map(card => (
+                  .filter((card) => card.type.main !== 'Mana')
+                  .map((card) => (
                     <Card
                       activateAbility={(attributeIndex: number) =>
                         activateAbility(
                           game.id,
                           player!.id,
                           card.id,
-                          attributeIndex
+                          attributeIndex,
                         )
                       }
                       card={card}
@@ -172,15 +190,15 @@ export const App: React.FC = () => {
               <ManaWrap>
                 {player!.battlefield &&
                   player!.battlefield
-                    .filter(card => card.type.main === 'Mana')
-                    .map(card => (
+                    .filter((card) => card.type.main === 'Mana')
+                    .map((card) => (
                       <Card
                         activateAbility={(attributeIndex: number) =>
                           activateAbility(
                             game.id,
                             player!.id,
                             card.id,
-                            attributeIndex
+                            attributeIndex,
                           )
                         }
                         card={card}
@@ -193,7 +211,7 @@ export const App: React.FC = () => {
 
           <HandWrap>
             <Hand cardCount={player!.hand.length}>
-              {player!.hand.map(card => (
+              {player!.hand.map((card) => (
                 <Card
                   card={card}
                   key={card.id}

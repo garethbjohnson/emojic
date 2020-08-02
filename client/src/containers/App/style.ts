@@ -31,7 +31,7 @@ export const Hand = styled.div<{ cardCount: number }>`
   > * {
     box-sizing: border-box;
     cursor: pointer;
-    max-width: calc(100% / ${props => props.cardCount});
+    max-width: calc(100% / ${(props) => props.cardCount});
     transition: transform 0.2s;
 
     & + * {
@@ -72,10 +72,10 @@ export const LibraryCardWrap = styled.div<{
 }>`
   position: absolute !important;
   transform: translateZ(
-    ${props => 0.125 * (props.totalCount - props.index)}rem
+    ${(props) => 0.125 * (props.totalCount - props.index)}rem
   );
   transform-style: preserve-3d;
-  z-index: ${props => props.totalCount - props.index};
+  z-index: ${(props) => props.totalCount - props.index};
 
   &:last-child {
     height: 20rem;
@@ -121,6 +121,32 @@ export const ManaWrap = styled.div`
 
 export const ManaPool = styled.span`
   text-shadow: 0 0.125rem 0.1875rem rgba(0, 0, 0, 0.2);
+`
+
+export const StartButton = styled.button`
+  background-color: white;
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.25);
+  color: darkslategrey;
+  cursor: pointer;
+  font-size: 3rem;
+  font-weight: bold;
+  line-height: 1;
+  margin-top: 2rem;
+  padding: 2rem 2.5rem;
+  text-transform: uppercase;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-0.5rem);
+
+    &:active {
+      box-shadow: 0 0.125rem 0.125rem rgba(0, 0, 0, 0.25);
+      transform: translateY(0.25rem);
+    }
+  }
 `
 
 export const Table = styled.div`
