@@ -25,11 +25,12 @@ const httpServer = new http.Server(app)
 
 const socket = socketIo(httpServer)
 
-const port = process.env.PORT || 3000
+const host = process.env.HOST || 'localhost'
+const port = Number(process.env.PORT) || 3001
 
 app.post('/api/games', createGame)
 
-socket.on('connection', connectedSocket => {
+socket.on('connection', (connectedSocket) => {
   connectedSocket.on('close', () => console.log('close'))
 
   connectedSocket.on('message', (requestMessage: string) => {
@@ -53,7 +54,7 @@ socket.on('connection', connectedSocket => {
             move.gameId,
             move.playerId,
             move.data.cardId,
-            move.data.attributeIndex
+            move.data.attributeIndex,
           )
           response = { status: 'SUCCESS', game: playerGame }
         } catch (error) {
@@ -106,6 +107,6 @@ socket.on('connection', connectedSocket => {
   })
 })
 
-httpServer.listen(port || 3000, () =>
-  console.log(`Running at \`http://localhost:${port}\`...`)
+httpServer.listen(port, host, () =>
+  console.log(`Running at \`http://${host}:${port}\`...`),
 )
