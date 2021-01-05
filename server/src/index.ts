@@ -2,7 +2,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import http from 'http'
-import socketIo from 'socket.io'
+import { Server, Socket } from 'socket.io'
 
 import { Game, Move, MoveType, Response } from 'emojic-shared'
 
@@ -23,17 +23,17 @@ app.use(express.static(`${__dirname}/client`))
 
 const httpServer = new http.Server(app)
 
-const socket = socketIo(httpServer)
+const socketServer = new Server(httpServer)
 
 const host = process.env.HOST || 'localhost'
 const port = Number(process.env.PORT) || 3001
 
 app.post('/api/games', createGame)
 
-socket.on('connection', (connectedSocket) => {
-  connectedSocket.on('close', () => console.log('close'))
+socketServer.on('connect', (socket: Socket) => {
+  socket.on('close', () => console.log('close'))
 
-  connectedSocket.on('message', (requestMessage: string) => {
+  socket.on('message', (requestMessage: string) => {
     let move: Move
 
     try {
@@ -62,7 +62,7 @@ socket.on('connection', (connectedSocket) => {
         }
 
         responseMessage = JSON.stringify(response)
-        connectedSocket.send(responseMessage)
+        socket.send(responseMessage)
         return
 
       case MoveType.CONTINUE_TURN:
@@ -74,7 +74,7 @@ socket.on('connection', (connectedSocket) => {
         }
 
         responseMessage = JSON.stringify(response)
-        connectedSocket.send(responseMessage)
+        socket.send(responseMessage)
         return
 
       case MoveType.PLAY_CARD:
@@ -86,7 +86,7 @@ socket.on('connection', (connectedSocket) => {
         }
 
         responseMessage = JSON.stringify(response)
-        connectedSocket.send(responseMessage)
+        socket.send(responseMessage)
         return
 
       case MoveType.SET_ATTACKER:
@@ -98,7 +98,7 @@ socket.on('connection', (connectedSocket) => {
         }
 
         responseMessage = JSON.stringify(response)
-        connectedSocket.send(responseMessage)
+        socket.send(responseMessage)
         return
 
       default:
