@@ -9,5 +9,6 @@
     "start": "echo '\\n  \\xe2\\x9a\\xa0\\xef\\xb8\\x8f  \\033[0;32mPlease run \\033[0;31myarn start-client\\033[0;32m, and run \\033[0;31myarn start-server\\033[0;32m in another tab.\\033[0m\\n'",
     "start-client": "cd shared && yarn build && cd ../client && yarn start",
     "start-server": "cd shared && yarn build && cd ../server && yarn start"
-  }
+  },
+  "license": "UNLICENSED"
 }
